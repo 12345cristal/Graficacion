@@ -1,0 +1,72 @@
+/* Reset estructural importante */
+:host {
+  display: block;
+  height: 100%;
+}
+
+/* Contenedor principal */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: #f5f6fa;
+}
+
+/* Sidebar ocupa ancho fijo en desktop */
+app-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+/* Contenido principal */
+.main-content {
+  flex: 1;
+  padding: 24px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* ============================= */
+/*           TABLET              */
+/* ============================= */
+@media (max-width: 1024px) {
+
+  app-sidebar {
+    width: 220px;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+}
+
+/* ============================= */
+/*           MÓVIL               */
+/* ============================= */
+@media (max-width: 768px) {
+
+  .layout-container {
+    flex-direction: column;
+  }
+
+  app-sidebar {
+    width: 100%;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+}
+
+/* ============================= */
+/*      MÓVIL PEQUEÑO            */
+/* ============================= */
+@media (max-width: 480px) {
+
+  .main-content {
+    padding: 12px;
+  }
+
+}

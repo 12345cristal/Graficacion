@@ -1,0 +1,40 @@
+<aside class="sidebar"
+    [class.collapsed]="isCollapsed"
+    [class.mobile]="isMobile">
+
+    <!-- Header -->
+    <div class="sidebar-header">
+
+        <button class="hamburger" (click)="toggleSidebar()">
+            <mat-icon>menu</mat-icon>
+        </button>
+
+        @if (!isCollapsed) {
+        <div class="title">
+            <h2>Requify</h2>
+            <span>Gestión de Requerimientos</span>
+        </div>
+        }
+
+    </div>
+
+    <!-- Menu -->
+    <nav class="menu">
+        @for (item of menuItems; track item.route) {
+        <a
+            class="menu-item"
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+
+            <mat-icon>{{ item.icon }}</mat-icon>
+
+            @if (!isCollapsed) {
+            <span>{{ item.label }}</span>
+            }
+
+        </a>
+        }
+    </nav>
+
+</aside>

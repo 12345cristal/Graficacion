@@ -1,0 +1,102 @@
+<div class="contenedor">
+
+    <div class="contenido">
+
+        <!-- ENCABEZADO -->
+        <header class="encabezado">
+            <div>
+                <h1>Proyectos</h1>
+                <p class="subtitulo">
+                    Gestión de proyectos y asignación de artefactos
+                </p>
+            </div>
+
+            <button class="btn-nuevo" (click)="abrirModal()">
+                + Nuevo Proyecto
+            </button>
+        </header>
+
+        <!-- BUSCADOR -->
+        <div class="barra-superior">
+            <input
+                type="text"
+                placeholder="Buscar proyectos..."
+                [(ngModel)]="textoBusqueda" />
+        </div>
+
+        <!-- SIN PROYECTOS -->
+        @if (!proyectosFiltrados.length) {
+        <div class="tarjeta">
+            <div class="icono">📁</div>
+            <h3>No hay proyectos</h3>
+            <p>Comienza creando tu primer proyecto</p>
+            <button class="btn-crear" (click)="abrirModal()">
+                + Crear Proyecto
+            </button>
+        </div>
+        }
+
+        <!-- LISTA -->
+        @if (proyectosFiltrados.length) {
+        <div class="lista">
+            @for (proyecto of proyectosFiltrados; track proyecto.id) {
+            <div class="item">
+                <h4>{{ proyecto.nombre }}</h4>
+                <p>{{ proyecto.descripcion }}</p>
+            </div>
+            }
+        </div>
+        }
+
+    </div>
+
+</div>
+
+<!-- MODAL FUERA DEL CONTENEDOR PARA MEJOR Z-INDEX -->
+@if (modalAbierto) {
+<div class="modal-overlay" (click)="cerrarModal()">
+
+    <div class="modal" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+            <h2>Nuevo Proyecto</h2>
+            <span class="cerrar" (click)="cerrarModal()">×</span>
+        </div>
+
+        <div class="modal-body">
+
+            <label>Nombre de la Empresa *</label>
+            <input
+                type="text"
+                placeholder="Ej: Corporation XYZ"
+                [(ngModel)]="nuevoProyecto.nombre" />
+            <label>Nombre del Proyecto *</label>
+
+            <input
+                type="text"
+                placeholder="Ej: Desarrollo de Software"
+                [(ngModel)]="nuevoProyecto.nombre" />
+
+            <label>Descripción General</label>
+            <textarea
+                rows="3"
+                placeholder="Describe el proceso, objetivos y contexto..."
+                [(ngModel)]="nuevoProyecto.descripcion">
+        </textarea>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar" (click)="cerrarModal()">
+                Cancelar
+            </button>
+
+            <button class="btn-crear" (click)="guardarProyecto()">
+                Crear Proyecto
+            </button>
+        </div>
+
+    </div>
+
+</div>
+}

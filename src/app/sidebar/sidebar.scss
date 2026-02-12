@@ -1,0 +1,101 @@
+$primary-color: #ff5c00;
+$sidebar-bg: #ffffff;
+$text-color: #444;
+$hover-bg: #fff3eb;
+
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background: $sidebar-bg;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+
+  &.collapsed {
+    width: 80px;
+  }
+
+  .sidebar-header {
+    background: $primary-color;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .hamburger {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+
+      mat-icon {
+        font-size: 28px;
+      }
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+
+      h2 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      span {
+        font-size: 0.75rem;
+        opacity: 0.9;
+      }
+    }
+  }
+
+  .menu {
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.75rem 1.2rem;
+      margin: 4px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: $text-color;
+      transition: all 0.2s ease;
+
+      mat-icon {
+        font-size: 22px;
+      }
+
+      &:hover {
+        background: $hover-bg;
+        color: $primary-color;
+      }
+
+      &.active {
+        background: $primary-color;
+        color: white;
+
+        mat-icon {
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+  }
+}
