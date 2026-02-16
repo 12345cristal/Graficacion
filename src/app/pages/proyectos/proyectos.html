@@ -2,6 +2,13 @@
 
     <div class="contenido">
 
+        <!-- MENSAJE ÉXITO -->
+        @if (mensajeExito) {
+        <div class="alerta-exito">
+            {{ mensajeExito }}
+        </div>
+        }
+
         <!-- ENCABEZADO -->
         <header class="encabezado">
             <div>
@@ -27,7 +34,6 @@
         <!-- SIN PROYECTOS -->
         @if (!proyectosFiltrados.length) {
         <div class="tarjeta">
-            <div class="icono">📁</div>
             <h3>No hay proyectos</h3>
             <p>Comienza creando tu primer proyecto</p>
             <button class="btn-crear" (click)="abrirModal()">
@@ -40,9 +46,12 @@
         @if (proyectosFiltrados.length) {
         <div class="lista">
             @for (proyecto of proyectosFiltrados; track proyecto.id) {
-            <div class="item">
+            <div class="item"
+                [class.proyecto-nuevo]="proyecto.id === ultimoProyectoId">
+
                 <h4>{{ proyecto.nombre }}</h4>
                 <p>{{ proyecto.descripcion }}</p>
+
             </div>
             }
         </div>
@@ -52,7 +61,7 @@
 
 </div>
 
-<!-- MODAL FUERA DEL CONTENEDOR PARA MEJOR Z-INDEX -->
+<!-- MODAL -->
 @if (modalAbierto) {
 <div class="modal-overlay" (click)="cerrarModal()">
 
@@ -68,20 +77,20 @@
             <label>Nombre de la Empresa *</label>
             <input
                 type="text"
-                placeholder="Ej: Corporation XYZ"
-                [(ngModel)]="nuevoProyecto.nombre" />
-            <label>Nombre del Proyecto *</label>
+                [(ngModel)]="nuevoProyecto.empresa"
+                [class.input-error]="!nuevoProyecto.empresa.trim() && modalAbierto" />
 
+            <label>Nombre del Proyecto *</label>
             <input
                 type="text"
-                placeholder="Ej: Desarrollo de Software"
-                [(ngModel)]="nuevoProyecto.nombre" />
+                [(ngModel)]="nuevoProyecto.nombre"
+                [class.input-error]="!nuevoProyecto.nombre.trim() && modalAbierto" />
 
-            <label>Descripción General</label>
+            <label>Descripción General *</label>
             <textarea
                 rows="3"
-                placeholder="Describe el proceso, objetivos y contexto..."
-                [(ngModel)]="nuevoProyecto.descripcion">
+                [(ngModel)]="nuevoProyecto.descripcion"
+                [class.input-error]="!nuevoProyecto.descripcion.trim() && modalAbierto">
         </textarea>
 
         </div>
@@ -91,7 +100,11 @@
                 Cancelar
             </button>
 
-            <button class="btn-crear" (click)="guardarProyecto()">
+            <button
+                class="btn-crear"
+                [disabled]="!formularioValido()"
+                (click)="guardarProyecto()">
+
                 Crear Proyecto
             </button>
         </div>

@@ -1,1 +1,268 @@
-<p>entrevistas works!</p>
+<main class="entrevistas-container">
+    <!-- ALERTA GLOBAL -->
+    <div
+        *ngIf="showAlert"
+        class="alert"
+        [class.alert-success]="alertType === 'success'"
+        [class.alert-error]="alertType === 'error'">
+        <button class="alert-close" (click)="closeAlert()">×</button>
+        <p>{{ alertMessage }}</p>
+    </div>
+
+    <!-- ===== VISTA 1: SELECCIÓN DE PROYECTOS ===== -->
+    <div *ngIf="currentView === 'projects'" class="projects-view">
+        <header class="view-header">
+            <h1>Mis Proyectos</h1>
+            <button class="btn-primary" (click)="openCreateProjectModal()">
+                + Crear Proyecto
+            </button>
+        </header>
+
+        <section class="projects-grid">
+            <!-- Tarjeta Crear Nuevo Proyecto -->
+            <div class="project-card project-card-create"
+                (click)="openCreateProjectModal()">
+                <div class="card-icon">+</div>
+                <h3>Crear Nuevo Proyecto</h3>
+                <p>Inicia un nuevo proyecto de investigación</p>
+            </div>
+
+            <!-- Tarjetas de Proyectos Existentes -->
+            <div
+                *ngFor="let proyecto of proyectos"
+                class="project-card"
+                (click)="selectProject(proyecto)">
+                <h3>{{ proyecto.nombre }}</h3>
+                <p class="project-description">{{ proyecto.descripcion ||
+                    'Sin descripción' }}</p>
+                <span class="project-date">
+                    {{ proyecto.fechaCreacion | date: 'short' }}
+                </span>
+            </div>
+        </section>
+
+        <!-- Estado vacío -->
+        <div *ngIf="proyectos.length === 0" class="empty-state">
+            <h2>No hay proyectos aún</h2>
+            <p>Crea uno nuevo para comenzar tu investigación</p>
+        </div>
+    </div>
+
+    <!-- ===== VISTA 2: DASHBOARD DE ENTREVISTAS ===== -->
+    <div *ngIf="currentView === 'dashboard'" class="dashboard-view">
+        <!-- Header con regreso -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <button class="btn-back" (click)="backToProjects()">←
+                    Volver</button>
+                <h1>{{ proyectoSeleccionado?.nombre }}</h1>
+            </div>
+            <button class="btn-primary" (click)="openCreateEntrevistaModal()">
+                + Nueva Entrevista
+            </button>
+        </header>
+
+        <!-- Pestañas -->
+        <div class="tabs">
+            <button
+                class="tab"
+                [class.active]="activeTab === 'entrevistas'"
+                (click)="changeTab('entrevistas')">
+                Entrevistas
+            </button>
+            <button
+                class="tab"
+                [class.active]="activeTab === 'historial'"
+                (click)="changeTab('historial')">
+                Historial
+            </button>
+        </div>
+
+        <!-- Contenido de Entrevistas -->
+        <section *ngIf="activeTab === 'entrevistas'" class="content-section">
+            <div class="grid">
+                <div
+                    *ngFor="let entrevista of entrevistas"
+                    class="card"
+                    [class.card-pendiente]="entrevista.estado === 'Pendiente'"
+                    [class.card-completada]="entrevista.estado === 'Completada'">
+                    <div class="card-header">
+                        <h3>{{ entrevista.nombre }}</h3>
+                        <span class="badge"
+                            [class.badge-pendiente]="entrevista.estado === 'Pendiente'">
+                            {{ entrevista.estado }}
+                        </span>
+                    </div>
+                    <p class="card-description">{{ entrevista.descripcion ||
+                        'Sin descripción' }}</p>
+                    <p class="card-meta">
+                        Creada: {{ entrevista.fechaCreacion | date: 'short' }}
+                    </p>
+                    <div class="card-actions">
+                        <button class="btn-execute"
+                            (click)="openExecuteModal(entrevista)">
+                            Ejecutar
+                        </button>
+                        <button class="btn-secondary">Editar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estado vacío -->
+            <div *ngIf="entrevistas.length === 0" class="empty-section">
+                <h2>No hay entrevistas aún</h2>
+                <p>Crea una nueva entrevista para comenzar</p>
+            </div>
+        </section>
+
+        <!-- Contenido de Historial -->
+        <section *ngIf="activeTab === 'historial'" class="content-section">
+            <div class="grid">
+                <div
+                    *ngFor="let item of historial"
+                    class="card card-completada">
+                    <div class="card-header">
+                        <h3>{{ item.nombre }}</h3>
+                        <span class="badge">Completada</span>
+                    </div>
+                    <p class="card-description">{{ item.descripcion ||
+                        'Sin descripción' }}</p>
+                    <p class="card-meta">
+                        Realizada: {{ item.fechaCreacion | date: 'short' }}
+                    </p>
+                    <div class="card-actions">
+                        <button class="btn-secondary">Ver Resultado</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estado vacío -->
+            <div *ngIf="historial.length === 0" class="empty-section">
+                <h2>No hay historial</h2>
+                <p>Las entrevistas completadas aparecerán aquí</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== MODAL: CREAR PROYECTO ===== -->
+    <div
+        *ngIf="showCreateProjectModal"
+        class="modal-overlay"
+        (click)="closeProjectModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Crear Nuevo Proyecto</h2>
+                <button class="modal-close"
+                    (click)="closeProjectModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nombre del Proyecto</label>
+                    <input
+                        type="text"
+                        placeholder="Ej: Investigación de Usuarios 2024"
+                        [(ngModel)]="projectForm.nombre"
+                        (keyup.enter)="saveProject()" />
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción (opcional)</label>
+                    <textarea
+                        placeholder="Describe el propósito y alcance del proyecto..."
+                        [(ngModel)]="projectForm.descripcion"
+                        rows="4"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closeProjectModal()">
+                    Cancelar
+                </button>
+                <button class="btn-primary" (click)="saveProject()">
+                    Crear Proyecto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: CREAR ENTREVISTA ===== -->
+    <div
+        *ngIf="showCreateEntrevistaModal"
+        class="modal-overlay"
+        (click)="closeEntrevistaModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Nueva Entrevista</h2>
+                <button class="modal-close"
+                    (click)="closeEntrevistaModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nombre de la Entrevista</label>
+                    <input
+                        type="text"
+                        placeholder="Ej: Entrevista Usuario Principal"
+                        [(ngModel)]="entrevistaForm.nombre"
+                        (keyup.enter)="saveEntrevista()" />
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción (opcional)</label>
+                    <textarea
+                        placeholder="Describe el propósito y objetivos de esta entrevista..."
+                        [(ngModel)]="entrevistaForm.descripcion"
+                        rows="4"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closeEntrevistaModal()">
+                    Cancelar
+                </button>
+                <button class="btn-primary" (click)="saveEntrevista()">
+                    Crear Entrevista
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: EJECUTAR ENTREVISTA ===== -->
+    <div
+        *ngIf="showExecuteModal && entrevistaSeleccionada"
+        class="modal-overlay"
+        (click)="closeExecuteModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Ejecutar Entrevista</h2>
+                <button class="modal-close"
+                    (click)="closeExecuteModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <h3>{{ entrevistaSeleccionada.nombre }}</h3>
+
+                <div class="form-group">
+                    <label>Selecciona Stakeholder</label>
+                    <select [(ngModel)]="selectedStakeholder">
+                        <option value>-- Selecciona una opción --</option>
+                        <option value="cliente">Cliente</option>
+                        <option value="usuario">Usuario Final</option>
+                        <option value="empleado">Empleado</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closeExecuteModal()">
+                    Cancelar
+                </button>
+                <button class="btn-primary" (click)="executeInterview()">
+                    Ejecutar
+                </button>
+            </div>
+        </div>
+    </div>
+</main>

@@ -27,7 +27,7 @@ export const routes: Routes = [
         path: 'stakeholders',
         loadComponent: () =>
           import('./pages/stakeholders/stakeholders')
-            .then(m => m.Stakeholders)
+            .then(m => m.StakeholdersComponent)
       },
 
       {

@@ -1,1 +1,176 @@
-<p>stakeholders works!</p>
+<div class="contenedor">
+
+    <h1>Stakeholders</h1>
+    <p class="subtitulo">Gestión de involucrados y partes interesadas</p>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button
+            [class.activo]="!vistaRoles"
+            (click)="mostrarStakeholders()">
+            Stakeholders
+        </button>
+
+        <button
+            [class.activo]="vistaRoles"
+            (click)="mostrarRoles()">
+            Roles
+        </button>
+    </div>
+
+    <!-- ========================= -->
+    <!-- LISTA STAKEHOLDERS -->
+    <!-- ========================= -->
+    @if (!vistaRoles) {
+    <div class="grid">
+        @for (s of stakeholders; track s.id) {
+        <div class="card">
+
+            <div class="card-header">
+                <h3>{{ s.nombre }}</h3>
+
+                <div class="acciones-iconos">
+                    <span class="icono editar"
+                        (click)="editarStakeholder(s)">✏️</span>
+
+                    <span class="icono eliminar"
+                        (click)="confirmarEliminarStakeholder(s.id)">🗑️</span>
+                </div>
+            </div>
+
+            <span class="badge">{{ s.rol }}</span>
+
+            <p class="descripcion">
+                {{ s.descripcion }}
+            </p>
+
+        </div>
+        }
+    </div>
+    }
+
+    <!-- ========================= -->
+    <!-- LISTA ROLES -->
+    <!-- ========================= -->
+    @if (vistaRoles) {
+    <div class="grid">
+        @for (r of roles; track r.id) {
+        <div class="card">
+
+            <div class="card-header">
+                <h3>{{ r.nombre }}</h3>
+
+                <div class="acciones-iconos">
+                    <span class="icono editar"
+                        (click)="editarRol(r)">✏️</span>
+
+                    <span class="icono eliminar"
+                        (click)="confirmarEliminarRol(r.id)">🗑️</span>
+                </div>
+            </div>
+
+            <!-- 👇 AQUÍ se muestra siempre la descripción -->
+            <p class="descripcion">
+                {{ r.descripcion }}
+            </p>
+
+        </div>
+        }
+    </div>
+    }
+
+</div>
+
+<!-- ========================= -->
+<!-- MODAL STAKEHOLDER -->
+<!-- ========================= -->
+@if (modalActivo === 'stakeholder') {
+<div class="modal-fondo">
+    <div class="modal">
+        <h2>{{ editando ? 'Editar Stakeholder' : 'Nuevo Stakeholder' }}</h2>
+
+        <input type="text"
+            placeholder="Nombre completo"
+            [(ngModel)]="nuevoNombre">
+
+        <input type="text"
+            placeholder="Rol"
+            [(ngModel)]="nuevoRol">
+
+        <textarea
+            placeholder="Descripción"
+            [(ngModel)]="nuevaDescripcion">
+      </textarea>
+
+        <div class="acciones">
+            <button class="cancelar"
+                (click)="cerrarModal()">
+                Cancelar
+            </button>
+
+            <button class="guardar"
+                (click)="guardarStakeholder()">
+                {{ editando ? 'Actualizar' : 'Guardar' }}
+            </button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- ========================= -->
+<!-- MODAL ROL -->
+<!-- ========================= -->
+@if (modalActivo === 'rol') {
+<div class="modal-fondo">
+    <div class="modal">
+        <h2>{{ editando ? 'Editar Rol' : 'Nuevo Rol' }}</h2>
+
+        <input type="text"
+            placeholder="Nombre del Rol"
+            [(ngModel)]="nuevoNombreRol">
+
+        <textarea
+            placeholder="Descripción del Rol"
+            [(ngModel)]="nuevaDescripcion">
+      </textarea>
+
+        <div class="acciones">
+            <button class="cancelar"
+                (click)="cerrarModal()">
+                Cancelar
+            </button>
+
+            <button class="guardar"
+                (click)="guardarRol()">
+                {{ editando ? 'Actualizar' : 'Guardar' }}
+            </button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- ========================= -->
+<!-- MODAL CONFIRMAR ELIMINAR -->
+<!-- ========================= -->
+@if (modalActivo === 'confirmar') {
+<div class="modal-fondo">
+    <div class="modal confirmar">
+
+        <h2>¿Estás segura?</h2>
+        <p>Esta acción no se puede deshacer.</p>
+
+        <div class="acciones">
+            <button class="cancelar"
+                (click)="cerrarModal()">
+                Cancelar
+            </button>
+
+            <button class="eliminar-btn"
+                (click)="eliminar()">
+                Sí, eliminar
+            </button>
+        </div>
+
+    </div>
+</div>
+}

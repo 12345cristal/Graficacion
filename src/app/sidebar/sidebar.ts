@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,8 @@ export class SidebarComponent {
 
   isCollapsed = false;
   isMobile = false;
+
+  @Output() estadoSidebar = new EventEmitter<boolean>();
 
   menuItems = [
     { label: 'Inicio', icon: 'dashboard', route: '/inicio' },
@@ -38,6 +40,7 @@ export class SidebarComponent {
   @HostListener('window:resize')
   checkScreenSize() {
     this.isMobile = window.innerWidth < 900;
+
     if (this.isMobile) {
       this.isCollapsed = true;
     }

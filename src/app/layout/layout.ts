@@ -14,4 +14,12 @@ import { CommonModule } from '@angular/common';
   templateUrl: './layout.html',
   styleUrl: './layout.scss'
 })
-export class LayoutComponent {}
+export class LayoutComponent {
+
+  sidebarAbierto = true;
+
+  toggleSidebar() {
+    this.sidebarAbierto = !this.sidebarAbierto;
+  }
+
+}
