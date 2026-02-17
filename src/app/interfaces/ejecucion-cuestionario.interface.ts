@@ -3,4 +3,5 @@ export interface EjecucionCuestionario {
   cuestionarioId: number;
   stakeholder: string;
   fecha: string;
+  respuestas?: string[];
 }

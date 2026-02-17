@@ -1,134 +1,482 @@
 <div class="container">
 
-    <h1>Cuestionarios</h1>
-    <p class="subtitle">
-        Gestiona cuestionarios reutilizables por rol de stakeholder
-    </p>
-
-    <!-- FILTROS -->
-    <div class="filtros">
-
-        <input
-            type="text"
-            placeholder="Buscar por folio, nombre o descripción..."
-            [(ngModel)]="busqueda">
-
-        <select [(ngModel)]="filtroRol">
-            <option [ngValue]="0">Todos los roles</option>
-
-            @for (rol of roles; track rol.id) {
-            <option [ngValue]="rol.id">
-                {{ rol.nombre }}
-            </option>
-            }
-        </select>
-
+    <!-- HEADER -->
+    <div class="header">
+        <div>
+            <h1>Cuestionarios</h1>
+            <p>Gestiona cuestionarios reutilizables por rol de stakeholder</p>
+        </div>
     </div>
 
-    <!-- LISTA -->
+    <!-- TABS O VISTAS -->
+    <div style="margin-bottom: 20px; border-bottom: 1px solid #e5e7eb;">
+        <button
+            style="padding: 12px 16px; background: none; border: none; cursor: pointer; font-weight: 600; color: #0f172a; border-bottom: 3px solid #0f172a;">
+            Cuestionarios
+        </button>
+        <button
+            style="padding: 12px 16px; background: none; border: none; cursor: pointer; font-weight: 500; color: #9ca3af;">
+            Historial de Ejecuciones
+        </button>
+    </div>
+
+    <!-- FILTROS Y BOTÓN CREAR -->
+    <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 15px; flex: 1; flex-wrap: wrap;">
+            <input type="text"
+                placeholder="Buscar por código, nombre o descripción..."
+                [(ngModel)]="busqueda"
+                style="flex: 1; min-width: 250px;">
+
+            <select [(ngModel)]="filtroRol"
+                style="min-width: 200px;">
+                <option [ngValue]="0">Todos los roles</option>
+                @for (rol of roles; track rol.id) {
+                <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+                }
+            </select>
+        </div>
+
+        <button class="btn btn-crear" (click)="abrirNuevoCuestionario()"
+            style="background: #0f172a; color: white; padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600;">
+            + Nuevo Cuestionario
+        </button>
+    </div>
+
+    <!-- LISTA DE CUESTIONARIOS -->
+    @if (cuestionariosFiltrados.length > 0) {
     @for (c of cuestionariosFiltrados; track c.id) {
 
     <div class="card">
 
         <div class="card-header">
-
             <div class="info">
-                <span class="codigo">{{ c.codigo }}</span>
-                <span class="rol">{{ c.rol.nombre }}</span>
+                <div class="badges">
+                    <span class="codigo">{{ c.codigo }}</span>
+                    <span class="rol">{{ c.rol.nombre }}</span>
+                </div>
 
                 <h3>{{ c.nombre }}</h3>
-                <p>{{ c.descripcion }}</p>
+                <p class="descripcion">{{ c.descripcion }}</p>
 
                 <div class="meta">
-                    <span>{{ c.preguntas.length }} preguntas</span>
-                    <span>Aplicado {{ c.aplicadoVeces }} veces</span>
-                    <span>Creado: {{ c.fechaCreacion }}</span>
+                    <span>📋 {{ c.preguntas.length }} preguntas</span>
+                    <span>✓ Aplicado {{ c.aplicadoVeces }} veces</span>
+                    <span>📅 {{ c.fechaCreacion }}</span>
                 </div>
             </div>
 
             <div class="acciones">
-                <button (click)="abrirEjecutar(c)">▶ Ejecutar</button>
-                <button (click)="abrirDetalles(c)">👁</button>
-                <button (click)="abrirEditar(c)">✏</button>
-                <button (click)="eliminarCuestionario(c.id)">🗑</button>
+                <button class="btn btn-ejecutar" (click)="abrirEjecutar(c)">▶
+                    Ejecutar</button>
+                <button class="btn btn-detalles" (click)="abrirDetalles(c)">👁
+                    Detalles</button>
+                <button class="btn btn-editar" (click)="abrirEditar(c)">✏
+                    Editar</button>
+                <button class="btn btn-eliminar"
+                    (click)="eliminarCuestionario(c.id)">🗑</button>
             </div>
-
         </div>
 
     </div>
 
     }
-
-</div>
-
-<!-- MODALES -->
-
-@if (modalEjecutar) {
-<div class="modal-overlay">
-    <div class="modal">
-        <h2>Ejecutar: {{ cuestionarioSeleccionado.nombre }}</h2>
-        <input #stakeholderInput type="text"
-            placeholder="Selecciona un stakeholder">
-        <button
-            (click)="ejecutarCuestionario(stakeholderInput.value)">
-            Comenzar Cuestionario
-        </button>
-        <button (click)="cerrarModales()">Cerrar</button>
+    } @else {
+    <div class="sin-datos">
+        <p>No hay cuestionarios disponibles</p>
     </div>
+    }
+
 </div>
-}
 
-@if (modalDetalles) {
+<!-- ================================================================== -->
+<!-- MODAL: NUEVO CUESTIONARIO -->
+<!-- ================================================================== -->
+@if (modalNuevoCuestionario) {
 <div class="modal-overlay">
-    <div class="modal">
+    <div class="modal modal-grande">
 
-        <h2>Detalles del Cuestionario</h2>
-        <span class="codigo">{{ cuestionarioSeleccionado.codigo }}</span>
-
-        <h3>{{ cuestionarioSeleccionado.nombre }}</h3>
-        <p>{{ cuestionarioSeleccionado.descripcion }}</p>
-
-        <hr>
-
-        <h4>Preguntas ({{ cuestionarioSeleccionado.preguntas.length }})</h4>
-
-        @for (p of cuestionarioSeleccionado.preguntas; track p.id) {
-        <div class="pregunta-card">
-            <span class="badge">Abierta</span>
-            <p>{{ p.texto }}</p>
+        <div class="modal-header">
+            <h2>Nuevo Cuestionario</h2>
+            <span class="cerrar" (click)="cerrarModales()">✕</span>
         </div>
-        }
 
-        <button (click)="cerrarModales()">Cerrar</button>
-    </div>
-</div>
-}
+        <div class="modal-body">
 
-@if (modalEditar) {
-<div class="modal-overlay">
-    <div class="modal grande">
+            <div class="form-group">
+                <label>Nombre del Cuestionario *</label>
+                <input type="text"
+                    [(ngModel)]="nuevoCuestionario.nombre"
+                    placeholder="Ej: Cuestionario de Requisitos Funcionales">
+            </div>
 
-        <h2>Editar Cuestionario</h2>
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea
+                    [(ngModel)]="nuevoCuestionario.descripcion"
+                    placeholder="Describe el propósito del cuestionario..."
+                    rows="3"></textarea>
+            </div>
 
-        <input [(ngModel)]="cuestionarioSeleccionado.nombre">
-        <textarea [(ngModel)]="cuestionarioSeleccionado.descripcion"></textarea>
+            <div class="form-group">
+                <label>Rol Asociado *</label>
+                <select [(ngModel)]="nuevoCuestionario.rol">
+                    <option value>Selecciona un rol</option>
+                    @for (rol of roles; track rol.id) {
+                    <option [ngValue]="rol">{{ rol.nombre }}</option>
+                    }
+                </select>
+            </div>
 
-        <select [(ngModel)]="cuestionarioSeleccionado.rol.id">
-            @for (rol of roles; track rol.id) {
-            <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+            <div class="form-group">
+                <label>Proyecto Asociado</label>
+                <select>
+                    <option>Sin proyecto asignado</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Agregar Pregunta</label>
+                <select [(ngModel)]="tipoPreguntatmp">
+                    <option value="abierta">Pregunta Abierta</option>
+                    <option value="multiple">Pregunta Múltiple</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="text"
+                    [(ngModel)]="nuevaPreguntaTexto"
+                    placeholder="Escribe la pregunta..."
+                    (keyup.enter)="agregarPregunta()">
+                <button type="button" (click)="agregarPregunta()"
+                    style="background: none; border: none; color: #9ca3af; cursor: pointer; padding: 8px; margin-top: 8px;">
+                    + Agregar Pregunta
+                </button>
+            </div>
+
+            @if (nuevoCuestionario.preguntas &&
+            nuevoCuestionario.preguntas.length > 0) {
+            <div
+                style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f3f4f6;">
+                <h4 style="margin: 0 0 12px 0;">Preguntas Agregadas ({{
+                    nuevoCuestionario.preguntas.length }})</h4>
+                @for (p of nuevoCuestionario.preguntas; track p.id; let i =
+                $index) {
+                <div class="pregunta-card">
+                    <span class="badge">{{ p.tipo === 'abierta' ? 'Abierta' :
+                        'Múltiple' }}</span>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: start; gap: 10px;">
+                        <p style="margin: 0; flex: 1;"><strong>{{ i + 1
+                                }}.</strong> {{ p.texto }}</p>
+                        <button (click)="eliminarPreguntaDelNuevo(i)"
+                            style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600;">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+                }
+            </div>
             }
-        </select>
 
-        <h4>Preguntas</h4>
-
-        @for (p of cuestionarioSeleccionado.preguntas; track p.id) {
-        <div class="pregunta-edit">
-            <input [(ngModel)]="p.texto">
         </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar"
+                (click)="cerrarModales()">Cancelar</button>
+            <button class="btn-guardar"
+                (click)="guardarNuevoCuestionario()">Crear Cuestionario</button>
+        </div>
+
+    </div>
+</div>
+}
+
+<!-- ================================================================== -->
+<!-- MODAL: EJECUTAR (DOS PASOS) -->
+<!-- ================================================================== -->
+@if (modalEjecutar && cuestionarioSeleccionado) {
+<div class="modal-overlay">
+    <div class="modal">
+
+        <!-- PASO 1: SELECCIONAR STAKEHOLDER -->
+        @if (!respondiendo) {
+
+        <div class="modal-header">
+            <h2>Ejecutar: {{ cuestionarioSeleccionado.nombre }}</h2>
+            <span class="cerrar" (click)="cerrarModales()">✕</span>
+        </div>
+
+        <div class="modal-body">
+            <label>Seleccionar Stakeholder</label>
+
+            <select [(ngModel)]="stakeholderInput"
+                placeholder="Selecciona un stakeholder">
+                <option value>Selecciona un stakeholder</option>
+                @for (s of stakeholders; track s) {
+                <option [value]="s">{{ s }}</option>
+                }
+            </select>
+
+            @if (!mostrarFormularioNuevoStakeholder) {
+            <button type="button"
+                (click)="mostrarFormularioNuevoStakeholder = true"
+                style="background: none; border: none; color: #3b82f6; cursor: pointer; padding: 8px; margin-top: 8px; font-weight: 600;">
+                + Crear Nuevo Stakeholder
+            </button>
+            }
+
+            @if (mostrarFormularioNuevoStakeholder) {
+            <div style="margin-top: 12px;">
+                <input type="text"
+                    [(ngModel)]="nuevoStakeholderNombre"
+                    placeholder="Nombre del nuevo stakeholder..."
+                    (keyup.enter)="stakeholderInput = nuevoStakeholderNombre; mostrarFormularioNuevoStakeholder = false;">
+            </div>
+            }
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar"
+                (click)="cerrarModales()">Cancelar</button>
+            <button class="btn-comenzar"
+                (click)="comenzarEjecucion()"
+                [disabled]="!stakeholderInput.trim()">
+                Comenzar Cuestionario
+            </button>
+        </div>
+
         }
 
-        <button (click)="guardarEdicion()">Guardar Cambios</button>
-        <button (click)="cerrarModales()">Cancelar</button>
+        <!-- PASO 2: RESPONDER PREGUNTAS -->
+        @if (respondiendo && preguntaActual) {
+
+        <div class="modal-header">
+            <h2>Ejecutar: {{ cuestionarioSeleccionado.nombre }}</h2>
+            <span class="cerrar" (click)="cerrarModales()">✕</span>
+        </div>
+
+        <div class="modal-body">
+
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span
+                    style="font-weight: 600; color: #0f172a; font-size: 15px;">
+                    Pregunta {{ indicePreguntaActual + 1 }} de {{ totalPreguntas
+                    }}
+                </span>
+                <span style="color: #6b7280; font-size: 14px;">{{
+                    stakeholderSeleccionadoNombre }}</span>
+            </div>
+
+            <!-- BARRA DE PROGRESO -->
+            <div
+                style="background: #e5e7eb; height: 6px; border-radius: 3px; margin-bottom: 24px; overflow: hidden;">
+                <div [style.width.%]="porcentajeProgreso"
+                    style="background: #3b82f6; height: 100%; transition: width 0.3s;">
+                </div>
+            </div>
+
+            <!-- PREGUNTA -->
+            <div
+                style="background: #fef3c7; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="margin: 0; color: #7c2d12; font-size: 15px;">
+                    <strong>{{ preguntaActual.texto }}</strong>
+                </p>
+                <span class="badge" style="margin-top: 8px;">
+                    {{ preguntaActual.tipo === 'abierta' ? 'Respuesta Abierta' :
+                    'Respuesta Múltiple' }}
+                </span>
+            </div>
+
+            <!-- RESPUESTA -->
+            <div class="form-group">
+                <label>Respuesta</label>
+                <textarea
+                    [(ngModel)]="respuestasActuales[indicePreguntaActual]"
+                    placeholder="Escribe tu respuesta aquí..."
+                    rows="4"></textarea>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar"
+                (click)="irAAnteriorPregunta()"
+                [disabled]="indicePreguntaActual === 0">
+                Anterior
+            </button>
+
+            @if (indicePreguntaActual < totalPreguntas - 1) {
+            <button class="btn-guardar" (click)="irASiguientePregunta()">
+                Siguiente
+            </button>
+            }
+
+            @if (indicePreguntaActual === totalPreguntas - 1) {
+            <button class="btn-comenzar" (click)="finalizarRespuestas()">
+                Enviar Respuestas
+            </button>
+            }
+        </div>
+
+        }
+
+    </div>
+</div>
+}
+
+<!-- ================================================================== -->
+<!-- MODAL: DETALLES -->
+<!-- ================================================================== -->
+@if (modalDetalles && cuestionarioSeleccionado) {
+<div class="modal-overlay">
+    <div class="modal modal-grande">
+
+        <div class="modal-header">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <h2 style="margin: 0;">Detalles del Cuestionario</h2>
+                <span class="codigo-detalles">{{ cuestionarioSeleccionado.codigo
+                    }}</span>
+            </div>
+            <span class="cerrar" (click)="cerrarModales()">✕</span>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="detalle-seccion">
+                <h3>{{ cuestionarioSeleccionado.nombre }}</h3>
+                <p class="descripcion">{{ cuestionarioSeleccionado.descripcion
+                    }}</p>
+
+                <div class="meta-detalles">
+                    <span>👥 <strong>Rol:</strong> {{
+                        cuestionarioSeleccionado.rol.nombre }}</span>
+                    <span>📋 <strong>Creado:</strong> {{
+                        cuestionarioSeleccionado.fechaCreacion }}</span>
+                    <span>✓ <strong>Aplicado:</strong> {{
+                        cuestionarioSeleccionado.aplicadoVeces }} veces</span>
+                </div>
+            </div>
+
+            <div class="preguntas-detalles">
+                <h4>Preguntas ({{ cuestionarioSeleccionado.preguntas.length
+                    }})</h4>
+
+                @if (cuestionarioSeleccionado.preguntas.length > 0) {
+                @for (p of cuestionarioSeleccionado.preguntas; track p.id; let i
+                = $index) {
+                <div class="pregunta-card">
+                    <span class="badge">{{ p.tipo === 'abierta' ? 'Abierta' :
+                        'Múltiple' }}</span>
+                    <p><strong>{{ i + 1 }}.</strong> {{ p.texto }}</p>
+                </div>
+                }
+                } @else {
+                <p class="sin-preguntas">No hay preguntas en este
+                    cuestionario</p>
+                }
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cerrar" (click)="cerrarModales()">Cerrar</button>
+        </div>
+
+    </div>
+</div>
+}
+
+<!-- ================================================================== -->
+<!-- MODAL: EDITAR -->
+<!-- ================================================================== -->
+@if (modalEditar && cuestionarioSeleccionado) {
+<div class="modal-overlay">
+    <div class="modal modal-grande">
+
+        <div class="modal-header">
+            <h2>Editar Cuestionario</h2>
+            <span class="cerrar" (click)="cerrarModales()">✕</span>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="form-group">
+                <label>Nombre del Cuestionario *</label>
+                <input type="text" [(ngModel)]="cuestionarioSeleccionado.nombre"
+                    placeholder="Ej: Cuestionario de Requisitos">
+            </div>
+
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea [(ngModel)]="cuestionarioSeleccionado.descripcion"
+                    placeholder="Describe el propósito del cuestionario..."
+                    rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Rol Aplicable *</label>
+                <select [(ngModel)]="cuestionarioSeleccionado.rol.id">
+                    @for (rol of roles; track rol.id) {
+                    <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Proyecto Asociado</label>
+                <select>
+                    <option>Sin proyecto asignado</option>
+                </select>
+            </div>
+
+            <div class="preguntas-editar">
+                <h4>Preguntas ({{ cuestionarioSeleccionado.preguntas.length
+                    }})</h4>
+
+                @if (cuestionarioSeleccionado.preguntas.length > 0) {
+                @for (p of cuestionarioSeleccionado.preguntas; track p.id; let i
+                = $index) {
+                <div
+                    style="display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start;">
+                    <span
+                        style="font-weight: 600; color: #0f172a; min-width: 20px;">{{
+                        i + 1 }}.</span>
+                    <input type="text" [(ngModel)]="p.texto"
+                        placeholder="Escribe la pregunta..."
+                        style="flex: 1;">
+                    <button
+                        (click)="cuestionarioSeleccionado.preguntas.splice(i, 1)"
+                        style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; padding: 6px;">
+                        ✕
+                    </button>
+                </div>
+                }
+                } @else {
+                <p class="sin-preguntas">No hay preguntas agregadas</p>
+                }
+
+                <div
+                    style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                    <button type="button"
+                        (click)="abrirEditar(cuestionarioSeleccionado)"
+                        style="background: none; border: none; color: #9ca3af; cursor: pointer; padding: 8px;">
+                        + Agregar Pregunta
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar"
+                (click)="cerrarModales()">Cancelar</button>
+            <button class="btn-guardar" (click)="guardarEdicion()">Actualizar
+                Cuestionario</button>
+        </div>
 
     </div>
 </div>
