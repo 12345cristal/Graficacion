@@ -7,12 +7,13 @@
   display: flex;
   min-height: 100vh;
   width: 100%;
-  background: #ffdca0;
+  background: transparent;
 }
 
 /* Sidebar ocupa su espacio natural */
 app-sidebar {
   flex-shrink: 0;
+  transition: width 0.3s ease;
 }
 
 /* Contenido SIEMPRE flexible */
@@ -21,7 +22,7 @@ app-sidebar {
   padding: 24px;
   overflow-x: hidden;
   overflow-y: auto;
-  transition: margin 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 /* Tablet */
@@ -40,5 +41,13 @@ app-sidebar {
 
   .main-content {
     padding: 16px;
+    margin-left: 260px;
+    transition: margin-left 0.3s ease;
   }
+
+  /* Cuando sidebar está collapsed en mobile */
+  .layout-container.sidebar-collapsed .main-content {
+    margin-left: 80px;
+  }
+
 }

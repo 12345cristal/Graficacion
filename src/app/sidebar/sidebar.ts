@@ -18,15 +18,14 @@ export class SidebarComponent {
   @Output() estadoSidebar = new EventEmitter<boolean>();
 
   menuItems = [
-    { label: 'Inicio', icon: 'dashboard', route: '/inicio' },
-    { label: 'Proyectos', icon: 'folder', route: '/proyectos' },
-    { label: 'Stakeholders', icon: 'groups', route: '/stakeholders' },
-    { label: 'Entrevistas', icon: 'chat', route: '/entrevistas' },
-    { label: 'Cuestionarios', icon: 'quiz', route: '/cuestionarios' },
-    { label: 'Observaciones', icon: 'visibility', route: '/observaciones' },
-    { label: 'Focus Group', icon: 'record_voice_over', route: '/focus-group' },
-    { label: 'Archivos', icon: 'folder_open', route: '/archivos' },
-    { label: 'Historias', icon: 'menu_book', route: '/historias' }
+    { label: 'Inicio', icon: 'dashboard', route: 'inicio' },
+    { label: 'Stakeholders', icon: 'groups', route: 'stakeholders' },
+    { label: 'Entrevistas', icon: 'chat', route: 'entrevistas' },
+    { label: 'Cuestionarios', icon: 'quiz', route: 'cuestionarios' },
+    { label: 'Observaciones', icon: 'visibility', route: 'observaciones' },
+    { label: 'Focus Group', icon: 'record_voice_over', route: 'focus-group' },
+    { label: 'Archivos', icon: 'folder_open', route: 'archivos' },
+    { label: 'Historias', icon: 'menu_book', route: 'historias' }
   ];
 
   constructor() {
@@ -35,14 +34,11 @@ export class SidebarComponent {
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
+    this.estadoSidebar.emit(this.isCollapsed);
   }
 
   @HostListener('window:resize')
   checkScreenSize() {
     this.isMobile = window.innerWidth < 900;
-
-    if (this.isMobile) {
-      this.isCollapsed = true;
-    }
   }
 }

@@ -1,7 +1,7 @@
-<div class="layout-container">
+<div class="layout-container" [class.sidebar-collapsed]="sidebarCollapsed">
 
     <!-- Sidebar -->
-    <app-sidebar></app-sidebar>
+    <app-sidebar (estadoSidebar)="onSidebarStateChange($event)"></app-sidebar>
 
     <!-- Contenido -->
     <div class="main-content">

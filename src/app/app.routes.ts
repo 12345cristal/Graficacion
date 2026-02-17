@@ -4,10 +4,17 @@ import { LayoutComponent } from './layout/layout';
 export const routes: Routes = [
   {
     path: '',
-    component: LayoutComponent, // 🔥 Aquí se carga el layout
-    children: [
+    loadComponent: () =>
+      import('./pages/principal/principal')
+        .then(m => m.ProyectosComponent)
+  },
 
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  {
+    path: 'proyecto/:id',
+    component: LayoutComponent,
+    children: [
+      
+      { path: '', redirectTo: 'inicio', pathMatch: 'full' },
 
       {
         path: 'inicio',
@@ -16,12 +23,6 @@ export const routes: Routes = [
             .then(m => m.Inicio)
       },
 
-      {
-        path: 'proyectos',
-        loadComponent: () =>
-          import('./pages/proyectos/proyectos')
-            .then(m => m.ProyectosComponent)
-      },
 
       {
         path: 'stakeholders',
@@ -34,7 +35,7 @@ export const routes: Routes = [
         path: 'entrevistas',
         loadComponent: () =>
           import('./pages/entrevistas/entrevistas')
-            .then(m => m.Entrevistas)
+            .then(m => m.EntrevistasComponent)
       },
 
       {

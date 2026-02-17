@@ -1,5 +1,4 @@
 <div class="pagina">
-    <!-- HEADER -->
     <header class="encabezado">
         <div class="encabezado__izq">
             <div class="logo">
@@ -12,20 +11,15 @@
         </div>
 
         <div class="encabezado__der">
-            <div class="usuario">
-                <div class="usuario__nombre">{{ usuario().nombre }}</div>
-                <div class="usuario__rol">{{ usuario().rol }}</div>
-            </div>
-
             <button type="button" class="btn btn--secundario"
-                (click)="cerrarSesion()">
-                <span class="btn__icono">⇦</span>
+                (click)="cerrarSesion()"
+                matTooltip="Cerrar sesión">
+                <mat-icon>logout</mat-icon>
                 Cerrar Sesión
             </button>
         </div>
     </header>
 
-    <!-- CONTENIDO -->
     <main class="contenido">
         <section class="titulo">
             <h1>Tus Proyectos</h1>
@@ -33,14 +27,12 @@
         </section>
 
         <section class="grid">
-            <!-- CARD: CREAR NUEVO -->
             <button type="button" class="card card--crear"
-                (click)="abrirModalCrear()">
+                (click)="abrirModalCrear()"
+                matTooltip="Crear nuevo proyecto">
                 <div class="card--crear__borde">
                     <div class="card--crear__centro">
-                        <div class="plus">
-                            <span>+</span>
-                        </div>
+                        <mat-icon class="plus">add_circle_outline</mat-icon>
                         <div class="card--crear__titulo">Crear Nuevo
                             Proyecto</div>
                         <div class="card--crear__desc">Comienza un nuevo
@@ -49,19 +41,18 @@
                 </div>
             </button>
 
-            <!-- LISTA DE PROYECTOS -->
             <div class="lista">
+                @for (p of proyectos(); track p.id) {
                 <article
                     class="card card--proyecto"
-                    *ngFor="let p of proyectos()"
-                    (click)="abrirProyecto(p)"
                     tabindex="0"
                     role="button"
+                    (click)="abrirProyecto(p)"
                     (keydown.enter)="abrirProyecto(p)"
                     (keydown.space)="abrirProyecto(p)">
                     <div class="card--proyecto__fila1">
-                        <div class="icono-proyecto" aria-hidden="true">📁</div>
-                        <div class="flecha" aria-hidden="true">›</div>
+                        <mat-icon class="icono-proyecto">folder</mat-icon>
+                        <mat-icon class="flecha">chevron_right</mat-icon>
                     </div>
 
                     <div class="card--proyecto__nombre">{{ p.nombre }}</div>
@@ -69,47 +60,54 @@
 
                     <div class="chips">
                         <div class="chip chip--claro">
-                            <span class="chip__icono">⚙️</span>
+                            <mat-icon class="chip__icono">settings</mat-icon>
                             <span class="chip__texto">Procesos</span>
                             <span class="chip__num">{{ p.procesos }}</span>
                         </div>
+
                         <div class="chip chip--azul">
-                            <span class="chip__icono">👥</span>
+                            <mat-icon class="chip__icono">people</mat-icon>
                             <span class="chip__texto">Stakeholders</span>
                             <span class="chip__num">{{ p.stakeholders }}</span>
                         </div>
                     </div>
 
                     <div class="fecha">
-                        <span class="fecha__icono">🗓️</span>
+                        <mat-icon class="fecha__icono">calendar_today</mat-icon>
                         <span>Creado: {{ p.creadoEl }}</span>
                     </div>
                 </article>
+                }
             </div>
         </section>
 
-        <!-- BOTÓN AYUDA -->
-        <button class="ayuda" type="button" aria-label="Ayuda">?</button>
+        <button class="ayuda" type="button"
+            matTooltip="Ayuda"
+            matTooltipPosition="above">
+            <mat-icon>help</mat-icon>
+        </button>
     </main>
 
-    <!-- MODAL CREAR PROYECTO -->
-    <div class="overlay" *ngIf="estaModalAbierta()" (click)="cerrarModal()">
+    @if (estaModalAbierta()) {
+    <div class="overlay" (click)="cerrarModal()">
         <div
             class="modal"
             role="dialog"
             aria-modal="true"
             aria-labelledby="tituloModal"
+            tabindex="0"
             (click)="$event.stopPropagation()"
-            (keydown)="onKeydownModal($event)"
-            tabindex="0">
+            (keydown)="onKeydownModal($event)">
             <div class="modal__header">
                 <div class="modal__titulo">
-                    <div class="modal__icono">🟧</div>
+                    <mat-icon class="modal__icono">folder_open</mat-icon>
                     <h2 id="tituloModal">Crear Nuevo Proyecto</h2>
                 </div>
 
                 <button type="button" class="modal__cerrar"
-                    (click)="cerrarModal()" aria-label="Cerrar">×</button>
+                    (click)="cerrarModal()" aria-label="Cerrar">
+                    <mat-icon>close</mat-icon>
+                </button>
             </div>
 
             <div class="modal__body">
@@ -120,11 +118,11 @@
                         class="campo__input"
                         type="text"
                         placeholder="Ej: Sistema de Gestión Hospitalaria"
-                        [formControl]="form.controls.nombre" />
-                    <span class="campo__error"
-                        *ngIf="form.controls.nombre.touched && form.controls.nombre.invalid">
-                        Ingresa un nombre válido (mínimo 3 caracteres).
-                    </span>
+                        [formControl]="nombreControl" />
+                    @if (nombreControl.touched && nombreControl.invalid) {
+                    <span class="campo__error">Ingresa un nombre válido (mínimo
+                        3 caracteres).</span>
+                    }
                 </label>
 
                 <label class="campo">
@@ -133,11 +131,11 @@
                         class="campo__textarea"
                         rows="3"
                         placeholder="Describe brevemente el proyecto y sus objetivos..."
-                        [formControl]="form.controls.descripcion"></textarea>
+                        [formControl]="descripcionControl"></textarea>
                 </label>
 
                 <div class="consejo">
-                    <span class="consejo__icono">💡</span>
+                    <mat-icon class="consejo__icono">lightbulb</mat-icon>
                     <div class="consejo__texto">
                         <b>Consejo:</b> Un buen nombre de proyecto debe ser
                         claro y descriptivo.
@@ -157,4 +155,5 @@
             </div>
         </div>
     </div>
+    }
 </div>

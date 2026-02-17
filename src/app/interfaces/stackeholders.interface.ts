@@ -1,6 +1,6 @@
 export interface Stakeholder {
-  id: number;
+  id: string;
   nombre: string;
-  rol: string;
+  rolId: string;
   descripcion: string;
 }

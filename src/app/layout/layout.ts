@@ -16,10 +16,10 @@ import { CommonModule } from '@angular/common';
 })
 export class LayoutComponent {
 
-  sidebarAbierto = true;
+  sidebarCollapsed = false;
 
-  toggleSidebar() {
-    this.sidebarAbierto = !this.sidebarAbierto;
+  onSidebarStateChange(collapsed: boolean) {
+    this.sidebarCollapsed = collapsed;
   }
 
 }

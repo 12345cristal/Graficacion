@@ -1,1 +1,135 @@
-<p>cuestionarios works!</p>
+<div class="container">
+
+    <h1>Cuestionarios</h1>
+    <p class="subtitle">
+        Gestiona cuestionarios reutilizables por rol de stakeholder
+    </p>
+
+    <!-- FILTROS -->
+    <div class="filtros">
+
+        <input
+            type="text"
+            placeholder="Buscar por folio, nombre o descripción..."
+            [(ngModel)]="busqueda">
+
+        <select [(ngModel)]="filtroRol">
+            <option [ngValue]="0">Todos los roles</option>
+
+            @for (rol of roles; track rol.id) {
+            <option [ngValue]="rol.id">
+                {{ rol.nombre }}
+            </option>
+            }
+        </select>
+
+    </div>
+
+    <!-- LISTA -->
+    @for (c of cuestionariosFiltrados; track c.id) {
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div class="info">
+                <span class="codigo">{{ c.codigo }}</span>
+                <span class="rol">{{ c.rol.nombre }}</span>
+
+                <h3>{{ c.nombre }}</h3>
+                <p>{{ c.descripcion }}</p>
+
+                <div class="meta">
+                    <span>{{ c.preguntas.length }} preguntas</span>
+                    <span>Aplicado {{ c.aplicadoVeces }} veces</span>
+                    <span>Creado: {{ c.fechaCreacion }}</span>
+                </div>
+            </div>
+
+            <div class="acciones">
+                <button (click)="abrirEjecutar(c)">▶ Ejecutar</button>
+                <button (click)="abrirDetalles(c)">👁</button>
+                <button (click)="abrirEditar(c)">✏</button>
+                <button (click)="eliminarCuestionario(c.id)">🗑</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    }
+
+</div>
+
+<!-- MODALES -->
+
+@if (modalEjecutar) {
+<div class="modal-overlay">
+    <div class="modal">
+        <h2>Ejecutar: {{ cuestionarioSeleccionado.nombre }}</h2>
+        <input #stakeholderInput type="text"
+            placeholder="Selecciona un stakeholder">
+        <button
+            (click)="ejecutarCuestionario(stakeholderInput.value)">
+            Comenzar Cuestionario
+        </button>
+        <button (click)="cerrarModales()">Cerrar</button>
+    </div>
+</div>
+}
+
+@if (modalDetalles) {
+<div class="modal-overlay">
+    <div class="modal">
+
+        <h2>Detalles del Cuestionario</h2>
+        <span class="codigo">{{ cuestionarioSeleccionado.codigo }}</span>
+
+        <h3>{{ cuestionarioSeleccionado.nombre }}</h3>
+        <p>{{ cuestionarioSeleccionado.descripcion }}</p>
+
+        <hr>
+
+        <h4>Preguntas ({{ cuestionarioSeleccionado.preguntas.length }})</h4>
+
+        @for (p of cuestionarioSeleccionado.preguntas; track p.id) {
+        <div class="pregunta-card">
+            <span class="badge">Abierta</span>
+            <p>{{ p.texto }}</p>
+        </div>
+        }
+
+        <button (click)="cerrarModales()">Cerrar</button>
+    </div>
+</div>
+}
+
+@if (modalEditar) {
+<div class="modal-overlay">
+    <div class="modal grande">
+
+        <h2>Editar Cuestionario</h2>
+
+        <input [(ngModel)]="cuestionarioSeleccionado.nombre">
+        <textarea [(ngModel)]="cuestionarioSeleccionado.descripcion"></textarea>
+
+        <select [(ngModel)]="cuestionarioSeleccionado.rol.id">
+            @for (rol of roles; track rol.id) {
+            <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+            }
+        </select>
+
+        <h4>Preguntas</h4>
+
+        @for (p of cuestionarioSeleccionado.preguntas; track p.id) {
+        <div class="pregunta-edit">
+            <input [(ngModel)]="p.texto">
+        </div>
+        }
+
+        <button (click)="guardarEdicion()">Guardar Cambios</button>
+        <button (click)="cerrarModales()">Cancelar</button>
+
+    </div>
+</div>
+}

@@ -1,176 +1,216 @@
-<div class="contenedor">
+<div class="pagina">
+    <div class="contenedor">
+        <div class="encabezado">
+            <h1>Stakeholders</h1>
+            <p>Gestión de involucrados y partes interesadas</p>
+        </div>
 
-    <h1>Stakeholders</h1>
-    <p class="subtitulo">Gestión de involucrados y partes interesadas</p>
+        <div class="tabs">
+            <button
+                type="button"
+                class="tab"
+                [class.tab--activa]="tabActiva() === 'stakeholders'"
+                (click)="cambiarTab('stakeholders')">
+                Stakeholders
+            </button>
+            <button
+                type="button"
+                class="tab"
+                [class.tab--activa]="tabActiva() === 'roles'"
+                (click)="cambiarTab('roles')">
+                Roles
+            </button>
+        </div>
 
-    <!-- TABS -->
-    <div class="tabs">
-        <button
-            [class.activo]="!vistaRoles"
-            (click)="mostrarStakeholders()">
-            Stakeholders
-        </button>
-
-        <button
-            [class.activo]="vistaRoles"
-            (click)="mostrarRoles()">
-            Roles
-        </button>
-    </div>
-
-    <!-- ========================= -->
-    <!-- LISTA STAKEHOLDERS -->
-    <!-- ========================= -->
-    @if (!vistaRoles) {
-    <div class="grid">
-        @for (s of stakeholders; track s.id) {
-        <div class="card">
-
-            <div class="card-header">
-                <h3>{{ s.nombre }}</h3>
-
-                <div class="acciones-iconos">
-                    <span class="icono editar"
-                        (click)="editarStakeholder(s)">✏️</span>
-
-                    <span class="icono eliminar"
-                        (click)="confirmarEliminarStakeholder(s.id)">🗑️</span>
-                </div>
+        <div class="barra">
+            <div class="buscador">
+                <mat-icon class="buscador__icono">search</mat-icon>
+                <input
+                    type="text"
+                    class="buscador__input"
+                    [value]="busqueda()"
+                    (input)="setBusqueda(($any($event.target).value))"
+                    [placeholder]="tabActiva() === 'stakeholders'
+            ? 'Buscar stakeholders por nombre o rol...'
+            : 'Buscar roles por nombre...'" />
             </div>
 
-            <span class="badge">{{ s.rol }}</span>
+            @if (tabActiva() === 'stakeholders') {
+            <button type="button" class="btn btn--negro"
+                (click)="abrirModalNuevoStakeholder()">
+                <span class="btn__plus">+</span>
+                Agregar Stakeholder
+            </button>
+            } @else {
+            <button type="button" class="btn btn--negro"
+                (click)="abrirModalNuevoRol()">
+                <span class="btn__plus">+</span>
+                Agregar Rol
+            </button>
+            }
+        </div>
 
-            <p class="descripcion">
-                {{ s.descripcion }}
-            </p>
+        @if (tabActiva() === 'stakeholders') {
+        @if (stakeholdersFiltrados().length === 0) {
+        <div class="vacio">
+            <div class="vacio__titulo">No hay stakeholders todavía</div>
+            <div class="vacio__desc">Crea uno con el botón <b>Agregar
+                    Stakeholder</b>.</div>
+        </div>
+        } @else {
+        <div class="grid grid--stakeholders">
+            @for (s of stakeholdersFiltrados(); track s.id) {
+            <article class="card">
+                <div class="card__top">
+                    <div class="card__titulo">
+                        <div class="card__nombre">{{ s.nombre }}</div>
+                        <div class="badge">{{ obtenerNombreRol(s.rolId) }}</div>
+                    </div>
 
+                    <div class="acciones">
+                        <button type="button" class="icon-btn"
+                            (click)="abrirModalEditarStakeholder(s)"
+                            aria-label="Editar">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button
+                            type="button"
+                            class="icon-btn icon-btn--rojo"
+                            (click)="eliminarStakeholder(s.id)"
+                            aria-label="Eliminar">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card__desc">{{ s.descripcion }}</div>
+            </article>
+            }
         </div>
         }
+        } @else {
+        @if (rolesFiltrados().length === 0) {
+        <div class="vacio">
+            <div class="vacio__titulo">No hay roles todavía</div>
+            <div class="vacio__desc">Crea uno con el botón <b>Agregar
+                    Rol</b>.</div>
+        </div>
+        } @else {
+        <div class="grid grid--roles">
+            @for (r of rolesFiltrados(); track r.id) {
+            <article class="card card--rol">
+                <div class="rol">
+                    <div class="rol__izq">
+                        <mat-icon
+                            class="rol__dot">fiber_manual_record</mat-icon>
+                        <span class="rol__nombre">{{ r.nombre }}</span>
+                    </div>
+
+                    <div class="acciones">
+                        <button type="button" class="icon-btn"
+                            (click)="abrirModalEditarRol(r)"
+                            aria-label="Editar">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button
+                            type="button"
+                            class="icon-btn icon-btn--rojo"
+                            (click)="eliminarRol(r.id)"
+                            aria-label="Eliminar">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </article>
+            }
+        </div>
+        }
+        }
+    </div>
+
+    <!-- MODAL Stakeholder -->
+    @if (modalStakeholderAbierto()) {
+    <div class="overlay" (click)="cerrarModalStakeholder()">
+        <div class="modal" (click)="$event.stopPropagation()" tabindex="0"
+            (keydown)="onKeydownModal($event)">
+            <div class="modal__header">
+                <div class="modal__titulo">
+                    @if (editandoStakeholderId()) { <span>Editar
+                        Stakeholder</span> }
+                    @else { <span>Nuevo Stakeholder</span> }
+                </div>
+                <button class="modal__cerrar" type="button"
+                    (click)="cerrarModalStakeholder()">×</button>
+            </div>
+
+            <div class="modal__body">
+                <label class="campo">
+                    <span class="campo__label">Nombre</span>
+                    <input class="campo__input" placeholder="Nombre completo"
+                        [formControl]="stakeholderForm.controls.nombre" />
+                </label>
+
+                <label class="campo">
+                    <span class="campo__label">Rol</span>
+                    <select class="campo__input"
+                        [formControl]="stakeholderForm.controls.rolId">
+                        <option value disabled>Selecciona un rol</option>
+                        @for (r of rolesOrdenados(); track r.id) {
+                        <option [value]="r.id">{{ r.nombre }}</option>
+                        }
+                    </select>
+                </label>
+
+                <label class="campo">
+                    <span class="campo__label">Descripción</span>
+                    <textarea
+                        class="campo__textarea"
+                        rows="3"
+                        placeholder="Descripción del rol y responsabilidades"
+                        [formControl]="stakeholderForm.controls.descripcion"></textarea>
+                </label>
+            </div>
+
+            <div class="modal__footer">
+                <button type="button" class="btn btn--gris"
+                    (click)="cerrarModalStakeholder()">Cancelar</button>
+                <button type="button" class="btn btn--oscuro"
+                    (click)="guardarStakeholder()">Guardar</button>
+            </div>
+        </div>
     </div>
     }
 
-    <!-- ========================= -->
-    <!-- LISTA ROLES -->
-    <!-- ========================= -->
-    @if (vistaRoles) {
-    <div class="grid">
-        @for (r of roles; track r.id) {
-        <div class="card">
-
-            <div class="card-header">
-                <h3>{{ r.nombre }}</h3>
-
-                <div class="acciones-iconos">
-                    <span class="icono editar"
-                        (click)="editarRol(r)">✏️</span>
-
-                    <span class="icono eliminar"
-                        (click)="confirmarEliminarRol(r.id)">🗑️</span>
+    <!-- MODAL Rol -->
+    @if (modalRolAbierto()) {
+    <div class="overlay" (click)="cerrarModalRol()">
+        <div class="modal" (click)="$event.stopPropagation()" tabindex="0"
+            (keydown)="onKeydownModal($event)">
+            <div class="modal__header">
+                <div class="modal__titulo">
+                    @if (editandoRolId()) { <span>Editar Rol</span> }
+                    @else { <span>Nuevo Rol</span> }
                 </div>
+                <button class="modal__cerrar" type="button"
+                    (click)="cerrarModalRol()">×</button>
             </div>
 
-            <!-- 👇 AQUÍ se muestra siempre la descripción -->
-            <p class="descripcion">
-                {{ r.descripcion }}
-            </p>
+            <div class="modal__body">
+                <label class="campo">
+                    <span class="campo__label">Nombre del Rol</span>
+                    <input class="campo__input"
+                        placeholder="Ej: Desarrollador Senior"
+                        [formControl]="rolForm.controls.nombre" />
+                </label>
+            </div>
 
+            <div class="modal__footer">
+                <button type="button" class="btn btn--gris"
+                    (click)="cerrarModalRol()">Cancelar</button>
+                <button type="button" class="btn btn--oscuro"
+                    (click)="guardarRol()">Guardar</button>
+            </div>
         </div>
-        }
     </div>
     }
-
 </div>
-
-<!-- ========================= -->
-<!-- MODAL STAKEHOLDER -->
-<!-- ========================= -->
-@if (modalActivo === 'stakeholder') {
-<div class="modal-fondo">
-    <div class="modal">
-        <h2>{{ editando ? 'Editar Stakeholder' : 'Nuevo Stakeholder' }}</h2>
-
-        <input type="text"
-            placeholder="Nombre completo"
-            [(ngModel)]="nuevoNombre">
-
-        <input type="text"
-            placeholder="Rol"
-            [(ngModel)]="nuevoRol">
-
-        <textarea
-            placeholder="Descripción"
-            [(ngModel)]="nuevaDescripcion">
-      </textarea>
-
-        <div class="acciones">
-            <button class="cancelar"
-                (click)="cerrarModal()">
-                Cancelar
-            </button>
-
-            <button class="guardar"
-                (click)="guardarStakeholder()">
-                {{ editando ? 'Actualizar' : 'Guardar' }}
-            </button>
-        </div>
-    </div>
-</div>
-}
-
-<!-- ========================= -->
-<!-- MODAL ROL -->
-<!-- ========================= -->
-@if (modalActivo === 'rol') {
-<div class="modal-fondo">
-    <div class="modal">
-        <h2>{{ editando ? 'Editar Rol' : 'Nuevo Rol' }}</h2>
-
-        <input type="text"
-            placeholder="Nombre del Rol"
-            [(ngModel)]="nuevoNombreRol">
-
-        <textarea
-            placeholder="Descripción del Rol"
-            [(ngModel)]="nuevaDescripcion">
-      </textarea>
-
-        <div class="acciones">
-            <button class="cancelar"
-                (click)="cerrarModal()">
-                Cancelar
-            </button>
-
-            <button class="guardar"
-                (click)="guardarRol()">
-                {{ editando ? 'Actualizar' : 'Guardar' }}
-            </button>
-        </div>
-    </div>
-</div>
-}
-
-<!-- ========================= -->
-<!-- MODAL CONFIRMAR ELIMINAR -->
-<!-- ========================= -->
-@if (modalActivo === 'confirmar') {
-<div class="modal-fondo">
-    <div class="modal confirmar">
-
-        <h2>¿Estás segura?</h2>
-        <p>Esta acción no se puede deshacer.</p>
-
-        <div class="acciones">
-            <button class="cancelar"
-                (click)="cerrarModal()">
-                Cancelar
-            </button>
-
-            <button class="eliminar-btn"
-                (click)="eliminar()">
-                Sí, eliminar
-            </button>
-        </div>
-
-    </div>
-</div>
-}

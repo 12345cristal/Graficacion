@@ -1,247 +1,235 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Entrevista, Proyecto } from '../../interfaces/entrevista.interface';
 
-interface CreateProjectForm {
-  nombre: string;
-  descripcion: string;
-}
-
-interface CreateEntrevistaForm {
-  nombre: string;
-  descripcion: string;
-}
-
-type AlertType = 'success' | 'error';
+import { Entrevista } from '../../interfaces/entrevista.interface';
+import { Pregunta } from '../../interfaces/pregunta.interface';
+import { Ejecucion, Respuesta } from '../../interfaces/ejecucion.interface';
+import { Stakeholder } from '../../interfaces/stackeholders.interface';
 
 @Component({
   selector: 'app-entrevistas',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './entrevistas.html',
-  styleUrl: './entrevistas.scss'
+  styleUrls: ['./entrevistas.scss']
 })
-export class Entrevistas implements OnInit {
-  // ===== PROPERTIES =====
+export class EntrevistasComponent {
 
-  // Vistas
-  currentView: 'projects' | 'dashboard' = 'projects';
-
-  // Proyectos
-  proyectos: Proyecto[] = [];
-  proyectoSeleccionado: Proyecto | null = null;
+  vistaActiva: 'entrevistas' | 'historial' | 'detalles' = 'entrevistas';
+  modalAbierto = false;
+  modalEjecucionAbierto = false;
+  modalDetallesAbierto = false;
+  busqueda = '';
 
   // Entrevistas
   entrevistas: Entrevista[] = [];
-  historial: Entrevista[] = [];
-  activeTab: 'entrevistas' | 'historial' = 'entrevistas';
+  editandoEntrevistaId: number | null = null;
 
-  // Modales
-  showCreateProjectModal = false;
-  showCreateEntrevistaModal = false;
-  showExecuteModal = false;
+  // Historial
+  historial: Ejecucion[] = [];
+  detallesEjecucion: Ejecucion | null = null;
 
-  // Formularios
-  projectForm: CreateProjectForm = {
-    nombre: '',
-    descripcion: ''
-  };
+  // Modal de nueva entrevista
+  nuevaEntrevista: Entrevista = this.crearEntrevistaVacia();
 
-  entrevistaForm: CreateEntrevistaForm = {
-    nombre: '',
-    descripcion: ''
-  };
+  // Modal de ejecución
+  entrevistaAEjecutar: Entrevista | null = null;
+  stakeholders: Stakeholder[] = [
+    { id: '1', nombre: 'Juan Pérez', rolId: 'po', descripcion: 'Product Owner' },
+    { id: '2', nombre: 'María García', rolId: 'dev', descripcion: 'Developer' }
+  ];
+  stakeholderSeleccionado: string = '';
+  nuevoStakeholder: string = '';
+  
+  // Propiedades para responder preguntas
+  respondiendo = false;
+  respuestasActuales: Respuesta[] = [];
+  indicePreguntaActual = 0;
+  stakeholderSeleccionadoNombre = '';
 
-  // Ejecución
-  entrevistaSeleccionada: Entrevista | null = null;
-  selectedStakeholder: string = '';
-
-  // Alertas
-  showAlert = false;
-  alertMessage = '';
-  alertType: AlertType = 'success';
-
-  // ===== CONSTRUCTOR =====
-  constructor() { }
-
-  // ===== LIFECYCLE =====
-  ngOnInit(): void {
-    this.loadProjects();
+  cambiarVista(vista: 'entrevistas' | 'historial' | 'detalles'): void {
+    this.vistaActiva = vista;
   }
 
-  // ===== MÉTODOS PÚBLICOS - PROYECTOS =====
-
-  openCreateProjectModal(): void {
-    this.resetProjectForm();
-    this.showCreateProjectModal = true;
-    document.body.style.overflow = 'hidden';
+  abrirModal(): void {
+    this.editandoEntrevistaId = null;
+    this.nuevaEntrevista = this.crearEntrevistaVacia();
+    this.modalAbierto = true;
   }
 
-  closeProjectModal(): void {
-    this.showCreateProjectModal = false;
-    document.body.style.overflow = 'auto';
+  abrirModalEditar(entrevista: Entrevista): void {
+    this.editandoEntrevistaId = entrevista.id;
+    this.nuevaEntrevista = JSON.parse(JSON.stringify(entrevista));
+    this.modalAbierto = true;
   }
 
-  saveProject(): void {
-    if (!this.validateProjectForm()) {
-      this.showNotification('Completa todos los campos', 'error');
-      return;
-    }
-
-    const newProject: Proyecto = {
-      id: Date.now(),
-      nombre: this.projectForm.nombre,
-      descripcion: this.projectForm.descripcion || undefined,
-      fechaCreacion: new Date()
-    };
-
-    this.proyectos.unshift(newProject);
-    this.showNotification('Proyecto creado correctamente', 'success');
-    this.closeProjectModal();
+  cerrarModal(): void {
+    this.modalAbierto = false;
+    this.editandoEntrevistaId = null;
+    this.nuevaEntrevista = this.crearEntrevistaVacia();
   }
 
-  selectProject(proyecto: Proyecto): void {
-    this.proyectoSeleccionado = proyecto;
-    this.currentView = 'dashboard';
-    this.loadProjectEntrevistas();
-  }
-
-  backToProjects(): void {
-    this.currentView = 'projects';
-    this.proyectoSeleccionado = null;
-    this.entrevistas = [];
-    this.historial = [];
-  }
-
-  // ===== MÉTODOS PÚBLICOS - ENTREVISTAS =====
-
-  changeTab(tab: 'entrevistas' | 'historial'): void {
-    this.activeTab = tab;
-  }
-
-  openCreateEntrevistaModal(): void {
-    this.resetEntrevistaForm();
-    this.showCreateEntrevistaModal = true;
-    document.body.style.overflow = 'hidden';
-  }
-
-  closeEntrevistaModal(): void {
-    this.showCreateEntrevistaModal = false;
-    document.body.style.overflow = 'auto';
-  }
-
-  saveEntrevista(): void {
-    if (!this.validateEntrevistaForm()) {
-      this.showNotification('Completa todos los campos', 'error');
-      return;
-    }
-
-    if (!this.proyectoSeleccionado) {
-      this.showNotification('No hay proyecto seleccionado', 'error');
-      return;
-    }
-
-    const newEntrevista: Entrevista = {
-      id: Date.now(),
-      nombre: this.entrevistaForm.nombre,
-      descripcion: this.entrevistaForm.descripcion || undefined,
-      proyectoId: this.proyectoSeleccionado.id,
-      preguntas: [],
-      estado: 'Pendiente',
-      fechaCreacion: new Date()
-    };
-
-    this.entrevistas.unshift(newEntrevista);
-    this.showNotification('Entrevista creada correctamente', 'success');
-    this.closeEntrevistaModal();
-  }
-
-  openExecuteModal(entrevista: Entrevista): void {
-    this.entrevistaSeleccionada = entrevista;
-    this.selectedStakeholder = '';
-    this.showExecuteModal = true;
-    document.body.style.overflow = 'hidden';
-  }
-
-  closeExecuteModal(): void {
-    this.showExecuteModal = false;
-    this.entrevistaSeleccionada = null;
-    this.selectedStakeholder = '';
-    document.body.style.overflow = 'auto';
-  }
-
-  executeInterview(): void {
-    if (!this.selectedStakeholder || !this.entrevistaSeleccionada) {
-      this.showNotification('Selecciona un stakeholder', 'error');
-      return;
-    }
-
-    this.showNotification('Entrevista ejecutada correctamente', 'success');
-    this.closeExecuteModal();
-  }
-
-  closeAlert(): void {
-    this.showAlert = false;
-  }
-
-  // ===== MÉTODOS PRIVADOS =====
-
-  private loadProjects(): void {
-    // Arrays inicializados vacíos, listos para recibir datos del backend
-    this.proyectos = [];
-  }
-
-  private loadProjectEntrevistas(): void {
-    // Cargar entrevistas del proyecto seleccionado
-    this.entrevistas = [];
-    this.historial = [];
-  }
-
-  private validateProjectForm(): boolean {
-    const { nombre } = this.projectForm;
-    return !!(nombre && nombre.trim());
-  }
-
-  private validateEntrevistaForm(): boolean {
-    const { nombre } = this.entrevistaForm;
-    return !!(nombre && nombre.trim());
-  }
-
-  private resetProjectForm(): void {
-    this.projectForm = {
+  crearEntrevistaVacia(): Entrevista {
+    return {
+      id: 0,
       nombre: '',
-      descripcion: ''
+      preguntas: [{ id: 0, texto: '', tipo: 'abierta' }],
+      fechaCreacion: new Date().toISOString()
     };
   }
 
-  private resetEntrevistaForm(): void {
-    this.entrevistaForm = {
-      nombre: '',
-      descripcion: ''
+  agregarPregunta(): void {
+    this.nuevaEntrevista.preguntas.push({ id: Date.now(), texto: '', tipo: 'abierta' });
+  }
+
+  eliminarPregunta(index: number): void {
+    if (this.nuevaEntrevista.preguntas.length > 1) {
+      this.nuevaEntrevista.preguntas.splice(index, 1);
+    }
+  }
+
+  guardarEntrevista(): void {
+    if (!this.nuevaEntrevista.nombre.trim()) return;
+
+    const preguntasValidas: Pregunta[] =
+      this.nuevaEntrevista.preguntas
+        .filter((p: Pregunta) => p.texto.trim() !== '');
+
+    if (!preguntasValidas.length) return;
+
+    const entrevista: Entrevista = {
+      ...this.nuevaEntrevista,
+      id: this.editandoEntrevistaId || Date.now(),
+      preguntas: preguntasValidas
     };
+
+    if (this.editandoEntrevistaId) {
+      // Editar
+      this.entrevistas = this.entrevistas.map(e => 
+        e.id === this.editandoEntrevistaId ? entrevista : e
+      );
+    } else {
+      // Crear nueva
+      this.entrevistas = [...this.entrevistas, entrevista];
+    }
+
+    this.cerrarModal();
   }
 
-  private showNotification(message: string, type: AlertType): void {
-    this.alertMessage = message;
-    this.alertType = type;
-    this.showAlert = true;
-
-    setTimeout(() => {
-      this.showAlert = false;
-    }, 3000);
+  abrirModalEjecucion(entrevista: Entrevista): void {
+    this.entrevistaAEjecutar = entrevista;
+    this.stakeholderSeleccionado = '';
+    this.nuevoStakeholder = '';
+    this.modalEjecucionAbierto = true;
   }
 
-  @HostListener('document:keydown.escape')
-  onEscapeKey(): void {
-    if (this.showCreateProjectModal) {
-      this.closeProjectModal();
+  cerrarModalEjecucion(): void {
+    this.modalEjecucionAbierto = false;
+    this.respondiendo = false;
+    this.entrevistaAEjecutar = null;
+    this.stakeholderSeleccionado = '';
+    this.nuevoStakeholder = '';
+    this.respuestasActuales = [];
+    this.indicePreguntaActual = 0;
+  }
+
+  comenzarEntrevista(): void {
+    if (!this.entrevistaAEjecutar) return;
+
+    let stakeholderNombre = '';
+    let stakeholderId = '';
+
+    if (this.nuevoStakeholder.trim()) {
+      stakeholderNombre = this.nuevoStakeholder.trim();
+      stakeholderId = `new-${Date.now()}`;
+    } else if (this.stakeholderSeleccionado) {
+      const sh = this.stakeholders.find(s => s.id === this.stakeholderSeleccionado);
+      if (sh) {
+        stakeholderNombre = sh.nombre;
+        stakeholderId = sh.id;
+      }
     }
-    if (this.showCreateEntrevistaModal) {
-      this.closeEntrevistaModal();
+
+    if (!stakeholderNombre) return;
+
+    // Inicializar respuestas vacías
+    this.respuestasActuales = this.entrevistaAEjecutar.preguntas.map(p => ({
+      preguntaTexto: p.texto,
+      respuesta: ''
+    }));
+
+    this.stakeholderSeleccionadoNombre = stakeholderNombre;
+    this.indicePreguntaActual = 0;
+    this.respondiendo = true;
+  }
+
+  irASiguientePregunta(): void {
+    if (this.indicePreguntaActual < this.respuestasActuales.length - 1) {
+      this.indicePreguntaActual++;
     }
-    if (this.showExecuteModal) {
-      this.closeExecuteModal();
+  }
+
+  irAAnteriorPregunta(): void {
+    if (this.indicePreguntaActual > 0) {
+      this.indicePreguntaActual--;
     }
+  }
+
+  finalizarRespuestas(): void {
+    if (!this.entrevistaAEjecutar) return;
+
+    let stakeholderId = '';
+    if (this.nuevoStakeholder.trim()) {
+      stakeholderId = `new-${Date.now()}`;
+    } else if (this.stakeholderSeleccionado) {
+      stakeholderId = this.stakeholderSeleccionado;
+    }
+
+    const nuevoFolio = `FOL-${String(this.historial.length + 1).padStart(3, '0')}`;
+    
+    const ejecucion: Ejecucion = {
+      folio: nuevoFolio,
+      entrevista: this.entrevistaAEjecutar.nombre,
+      entrevistaId: this.entrevistaAEjecutar.id,
+      responsable: 'Usuario Actual',
+      stakeholder: this.stakeholderSeleccionadoNombre,
+      stakeholderId: stakeholderId,
+      fecha: new Date().toLocaleString('es-ES'),
+      respuestas: this.respuestasActuales
+    };
+
+    this.historial = [ejecucion, ...this.historial];
+    this.cerrarModalEjecucion();
+    this.vistaActiva = 'historial';
+  }
+
+  get preguntaActual(): Respuesta | null {
+    return this.respuestasActuales[this.indicePreguntaActual] || null;
+  }
+
+  get totalPreguntas(): number {
+    return this.respuestasActuales.length;
+  }
+
+  verDetallesEjecucion(ejecucion: Ejecucion): void {
+    this.detallesEjecucion = ejecucion;
+    this.modalDetallesAbierto = true;
+  }
+
+  cerrarModalDetalles(): void {
+    this.modalDetallesAbierto = false;
+    this.detallesEjecucion = null;
+  }
+
+  eliminarEntrevista(id: number): void {
+    this.entrevistas = this.entrevistas.filter(e => e.id !== id);
+  }
+
+  get entrevistasFiltradas(): Entrevista[] {
+    return this.entrevistas.filter(e =>
+      e.nombre.toLowerCase()
+        .includes(this.busqueda.toLowerCase())
+    );
   }
 }
