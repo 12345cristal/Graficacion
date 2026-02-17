@@ -7,47 +7,64 @@
   display: flex;
   min-height: 100vh;
   width: 100%;
-  background: transparent;
+  background: #f5f6f8;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Sidebar ocupa su espacio natural */
 app-sidebar {
   flex-shrink: 0;
-  transition: width 0.3s ease;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Contenido SIEMPRE flexible */
+/* Contenido se adapta al sidebar */
 .main-content {
   flex: 1;
-  padding: 24px;
+  padding: 32px;
   overflow-x: hidden;
   overflow-y: auto;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #f5f6f8;
+}
+
+/* Scrollbar personalizada */
+.main-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
 /* Tablet */
 @media (max-width: 1024px) {
   .main-content {
-    padding: 20px;
+    padding: 24px;
   }
 }
 
 /* Móvil */
 @media (max-width: 900px) {
-
   .layout-container {
     position: relative;
   }
 
   .main-content {
-    padding: 16px;
-    margin-left: 260px;
-    transition: margin-left 0.3s ease;
+    padding: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Cuando sidebar está collapsed en mobile */
   .layout-container.sidebar-collapsed .main-content {
-    margin-left: 80px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-
 }

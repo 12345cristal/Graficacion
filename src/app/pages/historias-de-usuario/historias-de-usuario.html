@@ -1,1 +1,151 @@
-<p>historias-de-usuario works!</p>
+<div class="contenedor">
+
+    <div class="encabezado">
+        <div>
+            <h2>Historias de Usuario</h2>
+            <p>Gestión de historias de usuario y requerimientos ágiles</p>
+        </div>
+
+        <button class="boton-primario" (click)="abrirModalCrear()">
+            + Agregar Historia de Usuario
+        </button>
+    </div>
+
+    <input class="buscador" placeholder="Buscar historias de usuario..." />
+
+    <!-- TARJETA -->
+    <div class="tarjeta" [hidden]="!historiaActual">
+
+        <div class="tarjeta-superior">
+
+            <div class="etiquetas">
+                <span class="identificador">{{ historiaActual?.id }}</span>
+
+                <span class="prioridad"
+                    [ngClass]="obtenerClasePrioridad(historiaActual?.prioridad || '')">
+                    {{ historiaActual?.prioridad }}
+                </span>
+
+                <span class="estado"
+                    [ngClass]="obtenerClaseEstado(historiaActual?.estado || '')">
+                    {{ historiaActual?.estado }}
+                </span>
+            </div>
+
+            <div class="acciones">
+                <span class="icono editar" (click)="abrirModalEditar()">✏</span>
+                <span class="icono eliminar"
+                    (click)="eliminarHistoria()">🗑</span>
+            </div>
+
+        </div>
+
+        <p class="rol">Como {{ historiaActual?.rol }}</p>
+        <p>Quiero {{ historiaActual?.funcionalidad }}</p>
+        <p>Para {{ historiaActual?.beneficio }}</p>
+
+    </div>
+
+</div>
+
+<!-- MODAL CREAR -->
+<div class="modal" *ngIf="estado.modalCrearAbierto">
+    <div class="contenido-modal">
+
+        <div class="cabecera-modal">
+            <h3>Nueva Historia de Usuario</h3>
+            <span (click)="cerrarModales()">✕</span>
+        </div>
+
+        <label>Como (rol)</label>
+        <input [(ngModel)]="formulario.rol" />
+
+        <label>Quiero (funcionalidad)</label>
+        <input [(ngModel)]="formulario.funcionalidad" />
+
+        <label>Para (beneficio)</label>
+        <input [(ngModel)]="formulario.beneficio" />
+
+        <div class="fila">
+            <div>
+                <label>Prioridad</label>
+                <select [(ngModel)]="formulario.prioridad">
+                    <option>Alta</option>
+                    <option>Media</option>
+                    <option>Baja</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select [(ngModel)]="formulario.estado">
+                    <option>Pendiente</option>
+                    <option>En Progreso</option>
+                    <option>Completada</option>
+                </select>
+            </div>
+        </div>
+
+        <label>Criterios de Aceptación</label>
+        <textarea [(ngModel)]="formulario.criteriosAceptacion"></textarea>
+
+        <div class="acciones-modal">
+            <button class="boton-cancelar"
+                (click)="cerrarModales()">Cancelar</button>
+            <button class="boton-primario"
+                (click)="guardarHistoria()">Guardar</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal" *ngIf="estado.modalEditarAbierto">
+    <div class="contenido-modal">
+
+        <div class="cabecera-modal">
+            <h3>Editar Historia de Usuario</h3>
+            <span (click)="cerrarModales()">✕</span>
+        </div>
+
+        <label>Como (rol)</label>
+        <input [(ngModel)]="formulario.rol" />
+
+        <label>Quiero (funcionalidad)</label>
+        <input [(ngModel)]="formulario.funcionalidad" />
+
+        <label>Para (beneficio)</label>
+        <input [(ngModel)]="formulario.beneficio" />
+
+        <div class="fila">
+            <div>
+                <label>Prioridad</label>
+                <select [(ngModel)]="formulario.prioridad">
+                    <option>Alta</option>
+                    <option>Media</option>
+                    <option>Baja</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Estado</label>
+                <select [(ngModel)]="formulario.estado">
+                    <option>Pendiente</option>
+                    <option>En Progreso</option>
+                    <option>Completada</option>
+                </select>
+            </div>
+        </div>
+
+        <label>Criterios de Aceptación</label>
+        <textarea [(ngModel)]="formulario.criteriosAceptacion"></textarea>
+
+        <div class="acciones-modal">
+            <button class="boton-cancelar"
+                (click)="cerrarModales()">Cancelar</button>
+            <button class="boton-primario"
+                (click)="guardarHistoria()">Guardar</button>
+        </div>
+
+    </div>
+</div>

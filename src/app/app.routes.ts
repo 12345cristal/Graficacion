@@ -65,12 +65,19 @@ export const routes: Routes = [
           import('./pages/archivos/archivos')
             .then(m => m.Archivos)
       },
-
+      
       {
-        path: 'historias',
+        path: 'historias-de-usuario',
         loadComponent: () =>
           import('./pages/historias-de-usuario/historias-de-usuario')
             .then(m => m.HistoriasDeUsuario)
+      },
+
+      {
+        path: 'principal',
+        loadComponent: () =>
+          import('./pages/principal/principal')
+            .then(m => m.ProyectosComponent)
       }
 
     ]

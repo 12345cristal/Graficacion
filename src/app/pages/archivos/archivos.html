@@ -1,1 +1,104 @@
-<p>archivos works!</p>
+<div class="archivos-container">
+
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <h1>Archivos Complementarios</h1>
+            <p>Gestión de documentos y archivos relacionados con el proyecto</p>
+        </div>
+
+        <button class="btn btn-importar" (click)="abrirSelectorArchivos()"
+            [disabled]="cargando">
+            <mat-icon>cloud_upload</mat-icon>
+            {{ cargando ? 'Cargando...' : 'Subir Archivo' }}
+        </button>
+    </div>
+
+    <!-- Input oculto para seleccionar archivos -->
+    <input #fileInput type="file" multiple hidden
+        (change)="onFileSelected($event)"
+        accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.txt,.csv" />
+
+    <!-- Barra de búsqueda -->
+    <div class="search-container">
+        <div class="search-wrapper">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input type="text" placeholder="Buscar archivo por nombre..."
+                [(ngModel)]="searchText"
+                class="search-input" />
+        </div>
+        <span class="file-count">{{ archivosFiltrados.length }}
+            archivo(s)</span>
+    </div>
+
+    <!-- Mensaje de error -->
+    @if (errorMensaje) {
+    <div class="error-message">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMensaje }}</span>
+    </div>
+    }
+
+    <!-- Lista de archivos -->
+    @if (archivosFiltrados.length > 0) {
+    <div class="archivos-lista">
+        @for (archivo of archivosFiltrados; track archivo.id) {
+        <div class="archivo-card">
+            <!-- Ícono y tipo -->
+            <div class="archivo-tipo">
+                <div class="tipo-icon"
+                    [style.color]="getColorTipo(archivo.type)">
+                    <mat-icon>{{ getIconoTipo(archivo.type) }}</mat-icon>
+                </div>
+                <span class="tipo-badge"
+                    [style.backgroundColor]="getColorTipo(archivo.type) + '20'"
+                    [style.color]="getColorTipo(archivo.type)">
+                    {{ obtenerEtiqueta(archivo.type) }}
+                </span>
+            </div>
+
+            <!-- Información del archivo -->
+            <div class="archivo-info">
+                <h4>{{ archivo.name }}</h4>
+                <div class="archivo-meta">
+                    <span class="meta-item">
+                        <mat-icon>save_alt</mat-icon>
+                        {{ archivo.size }}
+                    </span>
+                    <span class="meta-item">
+                        <mat-icon>schedule</mat-icon>
+                        {{ archivo.date }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="archivo-acciones">
+                <button class="btn btn-accion btn-descargar"
+                    (click)="descargarArchivo(archivo)"
+                    title="Descargar archivo">
+                    <mat-icon>download</mat-icon>
+                </button>
+                <button class="btn btn-accion btn-eliminar"
+                    (click)="eliminarArchivo(archivo.id)"
+                    title="Eliminar archivo">
+                    <mat-icon>delete_outline</mat-icon>
+                </button>
+            </div>
+        </div>
+        }
+    </div>
+    } @else {
+    <div class="sin-archivos">
+        <mat-icon class="icono-grande">folder_open</mat-icon>
+        <h3>No hay archivos cargados</h3>
+        <p>Sube archivos complementarios para tu proyecto</p>
+        <button class="btn btn-primario" (click)="abrirSelectorArchivos()"
+            [disabled]="cargando">
+            <mat-icon>add_circle</mat-icon>
+            Cargar primer archivo
+        </button>
+    </div>
+    }
+
+</div>

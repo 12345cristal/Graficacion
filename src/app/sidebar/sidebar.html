@@ -1,11 +1,10 @@
-<aside class="sidebar"
-    [class.collapsed]="isCollapsed"
+<aside class="sidebar" [class.collapsed]="isCollapsed"
     [class.mobile]="isMobile">
 
-    <!-- Header -->
+    <!-- Header con Logo -->
     <div class="sidebar-header">
-
-        <button class="hamburger" (click)="toggleSidebar()">
+        <button class="hamburger" (click)="toggleSidebar()"
+            title="Colapsar/Expandir">
             <mat-icon>menu</mat-icon>
         </button>
 
@@ -15,26 +14,189 @@
             <span>Gestión de Requerimientos</span>
         </div>
         }
+    </div>
+
+    <!-- Selector de Proyecto -->
+    <div class="proyecto-selector menu-proyecto" (click)="toggleMenuProyecto()">
+        <div class="proyecto-info">
+            <div class="proyecto-avatar">{{
+                proyectoActual.codigo.charAt(0).toUpperCase() }}</div>
+            @if (!isCollapsed) {
+            <div class="proyecto-datos">
+                <span class="proyecto-codigo">{{ proyectoActual.codigo }}</span>
+                <span class="proyecto-nombre">{{ proyectoActual.nombre }}</span>
+            </div>
+            }
+        </div>
+
+        @if (!isCollapsed) {
+        <mat-icon class="selector-icon"
+            [class.rotated]="mostrarMenuProyecto">expand_more</mat-icon>
+        }
+
+        <!-- Submenú de Proyectos -->
+        @if (mostrarMenuProyecto && !isCollapsed) {
+        <div class="submenu proyecto-submenu">
+            <!-- Proyectos frecuentes (últimos 2) -->
+            @for (proyecto of proyectosDisponibles.slice(0, 2); track
+            proyecto.id) {
+            <button class="submenu-item proyecto-item"
+                [class.active]="proyecto.id === proyectoActual.id"
+                (click)="cambiarAProyecto(proyecto)">
+                <div class="proyecto-mini">
+                    <span class="codigo-mini">{{ proyecto.codigo }}</span>
+                    <span class="nombre-mini">{{ proyecto.nombre }}</span>
+                </div>
+                <mat-icon class="icon-estado"
+                    [style.color]="getColorEstado(proyecto.estado)">
+                    {{ getIconoEstado(proyecto.estado) }}
+                </mat-icon>
+            </button>
+            }
+
+            <!-- Divisor si hay más proyectos -->
+            @if (proyectosDisponibles.length > 2) {
+            <div class="submenu-divider"></div>
+            }
+
+            <!-- Botón para ver todos -->
+            @if (proyectosDisponibles.length > 2) {
+            <button class="submenu-item ver-todos-btn"
+                (click)="toggleAllProjects()">
+                <mat-icon>{{ showAllProjects ? 'expand_less' : 'expand_more'
+                    }}</mat-icon>
+                <span>{{ showAllProjects ? 'Menos proyectos' : 'Ver todos'
+                    }}</span>
+            </button>
+
+            <!-- Todos los proyectos expandido -->
+            @if (showAllProjects) {
+            <div class="proyectos-expandidos">
+                @for (proyecto of proyectosDisponibles.slice(2); track
+                proyecto.id) {
+                <button class="submenu-item proyecto-item"
+                    [class.active]="proyecto.id === proyectoActual.id"
+                    (click)="cambiarAProyecto(proyecto)">
+                    <div class="proyecto-mini">
+                        <span class="codigo-mini">{{ proyecto.codigo }}</span>
+                        <span class="nombre-mini">{{ proyecto.nombre }}</span>
+                    </div>
+                    <mat-icon class="icon-estado"
+                        [style.color]="getColorEstado(proyecto.estado)">
+                        {{ getIconoEstado(proyecto.estado) }}
+                    </mat-icon>
+                </button>
+                }
+            </div>
+            }
+            }
+
+            <!-- Separador -->
+            <div class="submenu-divider"></div>
+
+            <!-- Botón de ir al selector -->
+            <button class="submenu-item ir-selector-btn"
+                (click)="irAlSelectorProyectos()">
+                <mat-icon>add_circle_outline</mat-icon>
+                <span>Crear/Cambiar Proyecto</span>
+            </button>
+        </div>
+        }
+    </div>
+
+    <!-- Contenedor scrollable del menú -->
+    <div class="menu-container">
+
+        <!-- Menú Principal -->
+        <nav class="menu">
+            @for (item of menuPrincipal; track item.route) {
+            <a class="menu-item" [routerLink]="item.route"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                @if (!isCollapsed) {
+                <span>{{ item.label }}</span>
+                }
+            </a>
+            }
+        </nav>
+
+        <!-- Divisor -->
+        @if (!isCollapsed) {
+        <div class="menu-divider"></div>
+        }
+
+        <!-- Menú de Roles -->
+        @if (!isCollapsed) {
+        <div class="menu-section-title">Stakeholders</div>
+        }
+        <nav class="menu">
+            @for (item of menuRoles; track item.route) {
+            <a class="menu-item" [routerLink]="item.route"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                @if (!isCollapsed) {
+                <span>{{ item.label }}</span>
+                }
+            </a>
+            }
+        </nav>
+
+        <!-- Divisor -->
+        @if (!isCollapsed) {
+        <div class="menu-divider"></div>
+        }
+
+        <!-- Menú de Técnicas -->
+        @if (!isCollapsed) {
+        <div class="menu-section-title">Técnicas de Recolección</div>
+        }
+        <nav class="menu">
+            @for (item of menuTecnicas; track item.route) {
+            <a class="menu-item" [routerLink]="item.route"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                @if (!isCollapsed) {
+                <span>{{ item.label }}</span>
+                }
+            </a>
+            }
+        </nav>
 
     </div>
 
-    <!-- Menu -->
-    <nav class="menu">
-        @for (item of menuItems; track item.route) {
-        <a
-            class="menu-item"
-            [routerLink]="item.route"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }">
+    <!-- Espaciador -->
+    <div class="spacer"></div>
 
-            <mat-icon>{{ item.icon }}</mat-icon>
-
+    <!-- Usuario -->
+    <div class="usuario-container menu-usuario" (click)="toggleMenuUsuario()">
+        <div class="usuario-info">
+            <div class="usuario-avatar">{{ usuarioActual.avatar }}</div>
             @if (!isCollapsed) {
-            <span>{{ item.label }}</span>
+            <div class="usuario-datos">
+                <span class="usuario-nombre">{{ usuarioActual.nombre }}</span>
+                <span class="usuario-rol">{{ usuarioActual.rol }}</span>
+            </div>
             }
+        </div>
 
-        </a>
+        @if (!isCollapsed) {
+        <mat-icon class="selector-icon"
+            [class.rotated]="mostrarMenuUsuario">expand_more</mat-icon>
         }
-    </nav>
+
+        <!-- Submenú de Usuario -->
+        @if (mostrarMenuUsuario && !isCollapsed) {
+        <div class="submenu usuario-submenu">
+            <button class="submenu-item cerrar-sesion-btn"
+                (click)="cerrarSesion()">
+                <mat-icon>logout</mat-icon>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+        }
+    </div>
 
 </aside>
