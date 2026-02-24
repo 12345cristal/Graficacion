@@ -1,1 +1,113 @@
-<p>observaciones works!</p>
+<div class="contenedor">
+
+    <div class="encabezado">
+        <div>
+            <h2>Observaciones</h2>
+            <p>Registro de hallazgos y notas importantes</p>
+        </div>
+
+        <button class="boton-primario" (click)="abrirModalCrear()">
+            + Agregar Observación
+        </button>
+    </div>
+
+    <input class="buscador" placeholder="Buscar observaciones..." />
+
+    <!-- TARJETA -->
+    <div class="tarjeta" [hidden]="!observacionActual">
+
+        <div class="tarjeta-superior">
+            <h3>{{ observacionActual?.titulo }}</h3>
+
+            <div class="acciones">
+                <span class="icono editar" (click)="abrirModalEditar()">✏</span>
+                <span class="icono eliminar"
+                    (click)="eliminarObservacion()">🗑</span>
+            </div>
+        </div>
+
+        <span class="fecha">{{ observacionActual?.fecha }}</span>
+
+        <p>{{ observacionActual?.descripcion }}</p>
+
+    </div>
+
+</div>
+
+<!-- MODAL CREAR - Posicionado en raíz para evitar stacking context -->
+<ng-container *ngIf="estado.modalCrearAbierto">
+    <div class="modal-backdrop" (click)="cerrarModales()"></div>
+    <div class="modal" role="dialog" aria-modal="true">
+        <div class="contenido-modal">
+
+            <div class="cabecera-modal">
+                <h3>Nueva Observación</h3>
+                <button class="btn-cerrar" (click)="cerrarModales()"
+                    title="Cerrar" aria-label="Cerrar modal">✕</button>
+            </div>
+
+            <label>Título</label>
+            <input [(ngModel)]="formulario.titulo" />
+
+            <label>Descripción</label>
+            <textarea [(ngModel)]="formulario.descripcion"></textarea>
+
+            <label>Referencia a Entrevista (Opcional)</label>
+            <select [(ngModel)]="formulario.referenciaEntrevista">
+                <option value>Selecciona una entrevista</option>
+                <option>Entrevista 1</option>
+            </select>
+
+            <label>Referencia a Cuestionario (Opcional)</label>
+            <select [(ngModel)]="formulario.referenciaCuestionario">
+                <option value>Selecciona un cuestionario</option>
+                <option>Cuestionario 1</option>
+            </select>
+
+            <label>Archivos Adjuntos</label>
+
+            <div class="zona-archivos">
+                <input type="file" multiple
+                    (change)="manejarArchivos($event)" />
+                <p>Adjunta videos, audios, imágenes o documentos</p>
+            </div>
+
+            <div class="acciones-modal">
+                <button class="boton-cancelar"
+                    (click)="cerrarModales()">Cancelar</button>
+                <button class="boton-primario"
+                    (click)="guardarObservacion()">Guardar</button>
+            </div>
+
+        </div>
+    </div>
+</ng-container>
+
+<!-- MODAL EDITAR - Posicionado en raíz para evitar stacking context -->
+<ng-container *ngIf="estado.modalEditarAbierto">
+    <div class="modal-backdrop" (click)="cerrarModales()"></div>
+    <div class="modal" role="dialog" aria-modal="true">
+        <div class="contenido-modal">
+
+            <div class="cabecera-modal">
+                <h3>Editar Observación</h3>
+                <button class="btn-cerrar" (click)="cerrarModales()"
+                    title="Cerrar" aria-label="Cerrar modal">✕</button>
+            </div>
+
+            <label>Título</label>
+            <input [(ngModel)]="formulario.titulo" />
+
+            <label>Descripción</label>
+            <textarea [(ngModel)]="formulario.descripcion"></textarea>
+
+            <div class="acciones-modal">
+                <button class="boton-cancelar"
+                    (click)="cerrarModales()">Cancelar</button>
+                <button class="boton-primario"
+                    (click)="guardarObservacion()">Guardar</button>
+            </div>
+
+        </div>
+    </div>
+</ng-container>

@@ -48,104 +48,168 @@
 
 </div>
 
-<!-- MODAL CREAR -->
-<div class="modal" *ngIf="estado.modalCrearAbierto">
-    <div class="contenido-modal">
+<!-- MODAL CREAR - Posicionado en raíz para evitar stacking context -->
+<ng-container *ngIf="estado.modalCrearAbierto">
+    <div class="modal-backdrop"></div>
+    <div class="modal" role="dialog" aria-modal="true">
+        <div class="contenido-modal">
 
-        <div class="cabecera-modal">
-            <h3>Nueva Historia de Usuario</h3>
-            <span (click)="cerrarModales()">✕</span>
-        </div>
-
-        <label>Como (rol)</label>
-        <input [(ngModel)]="formulario.rol" />
-
-        <label>Quiero (funcionalidad)</label>
-        <input [(ngModel)]="formulario.funcionalidad" />
-
-        <label>Para (beneficio)</label>
-        <input [(ngModel)]="formulario.beneficio" />
-
-        <div class="fila">
-            <div>
-                <label>Prioridad</label>
-                <select [(ngModel)]="formulario.prioridad">
-                    <option>Alta</option>
-                    <option>Media</option>
-                    <option>Baja</option>
-                </select>
+            <div class="cabecera-modal">
+                <div class="modal-titulo">
+                    <h3>Nueva Historia de Usuario</h3>
+                    <p class="modal-subtitulo">Crea una nueva historia de
+                        usuario
+                        para tu proyecto</p>
+                </div>
+                <button class="btn-cerrar" (click)="cerrarModales()"
+                    title="Cerrar" aria-label="Cerrar modal">✕</button>
             </div>
 
-            <div>
-                <label>Estado</label>
-                <select [(ngModel)]="formulario.estado">
-                    <option>Pendiente</option>
-                    <option>En Progreso</option>
-                    <option>Completada</option>
-                </select>
+            <div class="formulario-contenedor">
+                <div class="campo-grupo">
+                    <label>Como (rol)</label>
+                    <select [(ngModel)]="formulario.rol" class="campo-select">
+                        <option value>Seleccionar rol...</option>
+                        @for (rol of rolesDisponibles; track rol) {
+                        <option>{{ rol }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="campo-grupo">
+                    <label>Quiero (funcionalidad)</label>
+                    <input [(ngModel)]="formulario.funcionalidad"
+                        class="campo-input"
+                        placeholder="Describe la funcionalidad deseada..." />
+                </div>
+
+                <div class="campo-grupo">
+                    <label>Para (beneficio)</label>
+                    <input [(ngModel)]="formulario.beneficio"
+                        class="campo-input"
+                        placeholder="Describe el beneficio que proporciona..." />
+                </div>
+
+                <div class="fila-dos-columnas">
+                    <div class="campo-grupo">
+                        <label>Prioridad</label>
+                        <select [(ngModel)]="formulario.prioridad"
+                            class="campo-select">
+                            <option>Alta</option>
+                            <option>Media</option>
+                            <option>Baja</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-grupo">
+                        <label>Estado</label>
+                        <select [(ngModel)]="formulario.estado"
+                            class="campo-select">
+                            <option>Pendiente</option>
+                            <option>En Progreso</option>
+                            <option>Completada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="campo-grupo">
+                    <label>Criterios de Aceptación</label>
+                    <textarea [(ngModel)]="formulario.criteriosAceptacion"
+                        class="campo-textarea"
+                        placeholder="Define los criterios de aceptación..."></textarea>
+                </div>
             </div>
+
+            <div class="acciones-modal">
+                <button class="btn-cancelar"
+                    (click)="cerrarModales()">Cancelar</button>
+                <button class="btn-guardar" (click)="guardarHistoria()">Guardar
+                    Historia</button>
+            </div>
+
         </div>
-
-        <label>Criterios de Aceptación</label>
-        <textarea [(ngModel)]="formulario.criteriosAceptacion"></textarea>
-
-        <div class="acciones-modal">
-            <button class="boton-cancelar"
-                (click)="cerrarModales()">Cancelar</button>
-            <button class="boton-primario"
-                (click)="guardarHistoria()">Guardar</button>
-        </div>
-
     </div>
-</div>
+</ng-container>
 
-<!-- MODAL EDITAR -->
-<div class="modal" *ngIf="estado.modalEditarAbierto">
-    <div class="contenido-modal">
+<!-- MODAL EDITAR - Posicionado en raíz para evitar stacking context -->
+<ng-container *ngIf="estado.modalEditarAbierto">
+    <div class="modal-backdrop"></div>
+    <div class="modal" role="dialog" aria-modal="true">
+        <div class="contenido-modal">
 
-        <div class="cabecera-modal">
-            <h3>Editar Historia de Usuario</h3>
-            <span (click)="cerrarModales()">✕</span>
-        </div>
-
-        <label>Como (rol)</label>
-        <input [(ngModel)]="formulario.rol" />
-
-        <label>Quiero (funcionalidad)</label>
-        <input [(ngModel)]="formulario.funcionalidad" />
-
-        <label>Para (beneficio)</label>
-        <input [(ngModel)]="formulario.beneficio" />
-
-        <div class="fila">
-            <div>
-                <label>Prioridad</label>
-                <select [(ngModel)]="formulario.prioridad">
-                    <option>Alta</option>
-                    <option>Media</option>
-                    <option>Baja</option>
-                </select>
+            <div class="cabecera-modal">
+                <div class="modal-titulo">
+                    <h3>Editar Historia de Usuario</h3>
+                    <p class="modal-subtitulo">Actualiza los detalles de la
+                        historia</p>
+                </div>
+                <button class="btn-cerrar" (click)="cerrarModales()"
+                    title="Cerrar" aria-label="Cerrar modal">✕</button>
             </div>
 
-            <div>
-                <label>Estado</label>
-                <select [(ngModel)]="formulario.estado">
-                    <option>Pendiente</option>
-                    <option>En Progreso</option>
-                    <option>Completada</option>
-                </select>
+            <div class="formulario-contenedor">
+                <div class="campo-grupo">
+                    <label>Como (rol)</label>
+                    <select [(ngModel)]="formulario.rol" class="campo-select">
+                        <option value>Seleccionar rol...</option>
+                        @for (rol of rolesDisponibles; track rol) {
+                        <option>{{ rol }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="campo-grupo">
+                    <label>Quiero (funcionalidad)</label>
+                    <input [(ngModel)]="formulario.funcionalidad"
+                        class="campo-input"
+                        placeholder="Describe la funcionalidad deseada..." />
+                </div>
+
+                <div class="campo-grupo">
+                    <label>Para (beneficio)</label>
+                    <input [(ngModel)]="formulario.beneficio"
+                        class="campo-input"
+                        placeholder="Describe el beneficio que proporciona..." />
+                </div>
+
+                <div class="fila-dos-columnas">
+                    <div class="campo-grupo">
+                        <label>Prioridad</label>
+                        <select [(ngModel)]="formulario.prioridad"
+                            class="campo-select">
+                            <option>Alta</option>
+                            <option>Media</option>
+                            <option>Baja</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-grupo">
+                        <label>Estado</label>
+                        <select [(ngModel)]="formulario.estado"
+                            class="campo-select">
+                            <option>Pendiente</option>
+                            <option>En Progreso</option>
+                            <option>Completada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="campo-grupo">
+                    <label>Criterios de Aceptación</label>
+                    <textarea [(ngModel)]="formulario.criteriosAceptacion"
+                        class="campo-textarea"
+                        placeholder="Define los criterios de aceptación..."></textarea>
+                </div>
             </div>
+
+            <div class="acciones-modal">
+                <button class="btn-cancelar"
+                    (click)="cerrarModales()">Cancelar</button>
+                <button class="btn-guardar"
+                    (click)="guardarHistoria()">Actualizar
+                    Historia</button>
+            </div>
+
         </div>
-
-        <label>Criterios de Aceptación</label>
-        <textarea [(ngModel)]="formulario.criteriosAceptacion"></textarea>
-
-        <div class="acciones-modal">
-            <button class="boton-cancelar"
-                (click)="cerrarModales()">Cancelar</button>
-            <button class="boton-primario"
-                (click)="guardarHistoria()">Guardar</button>
-        </div>
-
     </div>
-</div>
+</ng-container>

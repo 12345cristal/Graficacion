@@ -1,1 +1,99 @@
-<p>focus-group works!</p>
+<div class="contenedor">
+
+    <div class="encabezado">
+        <div>
+            <h2>Focus Group</h2>
+            <p>Gestión de sesiones grupales y dinámicas de análisis</p>
+        </div>
+
+        <button class="boton-primario" (click)="abrirModalCrear()">
+            + Nuevo Focus Group
+        </button>
+    </div>
+
+    <input class="buscador" placeholder="Buscar focus groups..." />
+
+    <!-- TARJETA -->
+    <div class="tarjeta" [hidden]="!focusActual">
+
+        <div class="tarjeta-superior">
+            <h3>{{ focusActual?.nombre }}</h3>
+
+            <div class="acciones">
+                <span class="icono editar" (click)="abrirModalEditar()">✏</span>
+                <span class="icono eliminar" (click)="eliminarFocus()">🗑</span>
+            </div>
+        </div>
+
+        <span class="fecha">{{ focusActual?.fecha }}</span>
+
+        <p>{{ focusActual?.descripcion }}</p>
+
+        <p class="participantes-label">
+            Participantes ({{ focusActual?.participantes?.length || 0 }})
+        </p>
+
+    </div>
+
+</div>
+
+<!-- MODAL CREAR / EDITAR - Posicionado en raíz para evitar stacking context -->
+<ng-container *ngIf="estado.modalCrearAbierto || estado.modalEditarAbierto">
+    <div class="modal-backdrop" (click)="cerrarModales()"></div>
+    <div class="modal" role="dialog" aria-modal="true">
+        <div class="contenido-modal">
+
+            <div class="cabecera-modal">
+                <h3>{{ estado.modalEditarAbierto ? 'Editar Focus Group' :
+                    'Nuevo Focus Group' }}</h3>
+                <button class="btn-cerrar" (click)="cerrarModales()"
+                    title="Cerrar" aria-label="Cerrar modal">✕</button>
+            </div>
+
+            <label>Nombre del Focus Group</label>
+            <input [(ngModel)]="formulario.nombre" />
+
+            <label>Descripción</label>
+            <textarea [(ngModel)]="formulario.descripcion"></textarea>
+
+            <label>Participantes</label>
+
+            <div class="fila-participante">
+                <input placeholder="Nombre"
+                    [(ngModel)]="nuevoParticipante.nombre" />
+                <input placeholder="Rol" [(ngModel)]="nuevoParticipante.rol" />
+                <button (click)="agregarParticipante()">Agregar</button>
+            </div>
+
+            <div class="participantes-lista">
+                <div class="participante-item"
+                    [hidden]="formulario.participantes.length === 0">
+                    Participantes agregados: {{ formulario.participantes.length
+                    }}
+                </div>
+            </div>
+
+            <label>Referencia a Entrevista (Opcional)</label>
+            <select [(ngModel)]="formulario.referenciaEntrevista">
+                <option value>Selecciona una entrevista</option>
+                <option>Entrevista 1</option>
+            </select>
+
+            <label>Archivos Adjuntos</label>
+
+            <div class="zona-archivos">
+                <input type="file" multiple
+                    (change)="manejarArchivos($event)" />
+                <p>Adjunta videos, audios, imágenes o documentos</p>
+            </div>
+
+            <div class="acciones-modal">
+                <button class="boton-cancelar"
+                    (click)="cerrarModales()">Cancelar</button>
+                <button class="boton-primario"
+                    (click)="guardarFocus()">Guardar</button>
+            </div>
+
+        </div>
+    </div>
+</ng-container>

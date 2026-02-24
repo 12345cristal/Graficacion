@@ -1,0 +1,156 @@
+.contenedor {
+  padding: 40px;
+  background: #f5f6f8;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.boton-primario {
+  background: #111827;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.buscador {
+  margin: 20px 0;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.tarjeta {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+}
+
+.tarjeta-superior {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fecha {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+// MODAL - Posicionado en viewport para evitar stacking context
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1999;
+}
+
+.contenido-modal {
+  background: white;
+  width: 500px;
+  padding: 25px;
+  border-radius: 12px;
+  z-index: 2001;
+  position: relative;
+}
+
+.cabecera-modal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.cabecera-modal h3 {
+  margin: 0;
+  flex: 1;
+}
+
+.btn-cerrar {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-cerrar:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+label {
+  font-size: 13px;
+  margin-top: 12px;
+  display: block;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+.zona-archivos {
+  margin-top: 10px;
+  border: 2px dashed #d1d5db;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.acciones-modal {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.boton-cancelar {
+  background: #e5e7eb;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin-right: 10px;
+}

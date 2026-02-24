@@ -1,0 +1,91 @@
+.dashboard {
+  padding: 40px;
+  background: #f5f6f8;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fecha {
+  background: #fff7ed;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  border: 1px solid #fed7aa;
+}
+
+.grid-metricas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 25px;
+}
+
+.tarjeta {
+  padding: 20px;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.tarjeta h4 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.tarjeta span {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.grid-inferior {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.acciones {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+}
+
+.acciones button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+.actividad {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+}
+
+.actividad-item {
+  margin-top: 15px;
+}
+
+.proyecto-actual {
+  margin-top: 30px;
+  padding: 20px;
+  background: #fff7ed;
+  border-radius: 14px;
+  border: 1px solid #fed7aa;
+}
+
+.resumen {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}

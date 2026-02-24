@@ -76,7 +76,7 @@ export class SidebarComponent implements OnInit {
 
   // Menús organizados por sección
   menuPrincipal = [
-    { label: 'Dashboard', icon: 'dashboard', route: 'principal' },
+    { label: 'Inicio', icon: 'dashboard', route: 'inicio' },
     { label: 'Procesos', icon: 'settings', route: 'procesos' }
   ];
 
@@ -137,7 +137,7 @@ export class SidebarComponent implements OnInit {
 
   cerrarSesion() {
     // Lógica para cerrar sesión y regresar a inicio
-    this.router.navigate(['/inicio']);
+    this.router.navigate(['/proyecto', this.proyectoActual.id, 'inicio']);
     this.mostrarMenuUsuario = false;
   }
 

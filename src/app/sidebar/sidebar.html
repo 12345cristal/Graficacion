@@ -110,7 +110,8 @@
         <!-- Menú Principal -->
         <nav class="menu">
             @for (item of menuPrincipal; track item.route) {
-            <a class="menu-item" [routerLink]="item.route"
+            <a class="menu-item"
+                [routerLink]="['/proyecto', proyectoActual.id, item.route]"
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }">
                 <mat-icon>{{ item.icon }}</mat-icon>
@@ -132,7 +133,8 @@
         }
         <nav class="menu">
             @for (item of menuRoles; track item.route) {
-            <a class="menu-item" [routerLink]="item.route"
+            <a class="menu-item"
+                [routerLink]="['/proyecto', proyectoActual.id, item.route]"
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }">
                 <mat-icon>{{ item.icon }}</mat-icon>
@@ -154,7 +156,8 @@
         }
         <nav class="menu">
             @for (item of menuTecnicas; track item.route) {
-            <a class="menu-item" [routerLink]="item.route"
+            <a class="menu-item"
+                [routerLink]="['/proyecto', proyectoActual.id, item.route]"
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{ exact: true }">
                 <mat-icon>{{ item.icon }}</mat-icon>

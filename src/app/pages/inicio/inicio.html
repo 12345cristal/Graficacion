@@ -1,1 +1,101 @@
-<p>inicio works!</p>
+<div class="dashboard">
+
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <h2>Dashboard</h2>
+            <p>Bienvenido, {{ usuarioNombre }} • {{ proyectoNombre }}</p>
+        </div>
+
+        <div class="fecha">
+            {{ fechaActual }}
+        </div>
+    </div>
+
+    <!-- Tarjetas métricas -->
+    <div class="grid-metricas">
+
+        <div class="tarjeta" [style.background]="procesos.colorFondo">
+            <h4>{{ procesos.titulo }}</h4>
+            <span>{{ procesos.cantidad }}</span>
+        </div>
+
+        <div class="tarjeta" [style.background]="stakeholders.colorFondo">
+            <h4>{{ stakeholders.titulo }}</h4>
+            <span>{{ stakeholders.cantidad }}</span>
+        </div>
+
+        <div class="tarjeta" [style.background]="roles.colorFondo">
+            <h4>{{ roles.titulo }}</h4>
+            <span>{{ roles.cantidad }}</span>
+        </div>
+
+        <div class="tarjeta" [style.background]="entrevistas.colorFondo">
+            <h4>{{ entrevistas.titulo }}</h4>
+            <span>{{ entrevistas.cantidad }}</span>
+        </div>
+
+        <div class="tarjeta" [style.background]="cuestionarios.colorFondo">
+            <h4>{{ cuestionarios.titulo }}</h4>
+            <span>{{ cuestionarios.cantidad }}</span>
+        </div>
+
+        <div class="tarjeta" [style.background]="historias.colorFondo">
+            <h4>{{ historias.titulo }}</h4>
+            <span>{{ historias.cantidad }}</span>
+        </div>
+
+        <div class="tarjeta" [style.background]="observaciones.colorFondo">
+            <h4>{{ observaciones.titulo }}</h4>
+            <span>{{ observaciones.cantidad }}</span>
+        </div>
+
+        <div class="tarjeta" [style.background]="focus.colorFondo">
+            <h4>{{ focus.titulo }}</h4>
+            <span>{{ focus.cantidad }}</span>
+        </div>
+
+    </div>
+
+    <!-- Sección inferior -->
+    <div class="grid-inferior">
+
+        <div class="acciones">
+            <h3>Acciones Rápidas</h3>
+            <button>Crear Proceso</button>
+            <button>Añadir Stakeholder</button>
+            <button>Nueva Entrevista</button>
+            <button>Crear Historia de Usuario</button>
+        </div>
+
+        <div class="actividad">
+            <h3>Actividad Reciente</h3>
+
+            <div class="actividad-item">
+                <strong>{{ actividad1.titulo }}</strong>
+                <span>{{ actividad1.descripcion }}</span>
+                <small>{{ actividad1.fechaTexto }}</small>
+            </div>
+
+            <div class="actividad-item">
+                <strong>{{ actividad2.titulo }}</strong>
+                <span>{{ actividad2.descripcion }}</span>
+                <small>{{ actividad2.fechaTexto }}</small>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Proyecto actual -->
+    <div class="proyecto-actual">
+        <h3>Proyecto Actual: {{ proyectoActual.nombre }}</h3>
+        <p>Sin descripción del proyecto</p>
+        <div class="resumen">
+            <span>{{ proyectoActual.procesos }} Procesos</span>
+            <span>{{ proyectoActual.stakeholders }} Stakeholders</span>
+            <span>Creado: {{ proyectoActual.fechaCreacion }}</span>
+        </div>
+    </div>
+
+</div>

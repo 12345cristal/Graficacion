@@ -14,6 +14,21 @@ import { EstadoHistorias } from '../../interfaces/estado-historias.interface';
 export class HistoriasDeUsuario {
 
   // ================================
+  // Lista de roles disponibles
+  // ================================
+  rolesDisponibles: string[] = [
+    'Administrador',
+    'Usuario',
+    'Cliente',
+    'Gerente',
+    'Analista',
+    'Desarrollador',
+    'Diseñador',
+    'Tester',
+    'Stakeholder'
+  ];
+
+  // ================================
   // Estado del componente
   // ================================
   estado: EstadoHistorias = {

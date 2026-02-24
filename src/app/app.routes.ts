@@ -56,7 +56,7 @@ export const routes: Routes = [
         path: 'focus-group',
         loadComponent: () =>
           import('./pages/focus-group/focus-group')
-            .then(m => m.FocusGroup)
+            .then(m => m.FocusGroupComponent)
       },
 
       {

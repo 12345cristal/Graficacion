@@ -8,4 +8,9 @@ export interface HistoriaUsuario {
   prioridad: 'Alta' | 'Media' | 'Baja';
   estado: 'Pendiente' | 'En Progreso' | 'Completada';
   criteriosAceptacion: string;
+  fechaCreacion?: Date;
+  fechaActualizacion?: Date;
+  asignadoA?: string;
+  etiquetas?: string[];
 }
+
