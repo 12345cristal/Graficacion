@@ -1,12 +1,19 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout';
+import { LoginComponent } from './pages/login/login';
 
 export const routes: Routes = [
+  // Ruta de login - Primera página que se muestra
+  {
+    path: 'auth/login',
+    component: LoginComponent
+  },
+
+  // Ruta raíz redirige a login
   {
     path: '',
-    loadComponent: () =>
-      import('./pages/principal/principal')
-        .then(m => m.ProyectosComponent)
+    redirectTo: 'auth/login',
+    pathMatch: 'full'
   },
 
   {

@@ -1,0 +1,175 @@
+<div class="analisis-documental-container">
+
+    <!-- Header -->
+    <div class="header-section">
+        <div class="header-content">
+            <h1>Análisis Documental</h1>
+            <p class="subtitle">Carga y gestiona documentos para análisis</p>
+        </div>
+        <button class="btn-primary" (click)="abrirSelectorArchivos()">
+            <mat-icon>cloud_upload</mat-icon>
+            Cargar Documentos
+        </button>
+    </div>
+
+    <!-- Input file (hidden) -->
+    <input
+        #fileInput
+        type="file"
+        multiple
+        accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.txt,.csv"
+        (change)="onFileSelected($event)"
+        style="display: none" />
+
+    <!-- Estadísticas -->
+    <div class="estadisticas-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <mat-icon>storage</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Total Cargado</span>
+                <span class="stat-value">{{ estadisticas.totalCargado }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <mat-icon>insert_drive_file</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Documentos</span>
+                <span class="stat-value">{{ estadisticas.cantidadDocumentos
+                    }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <mat-icon>description</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">PDF</span>
+                <span class="stat-value">{{ estadisticas.documentosPorTipo.pdf
+                    }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <mat-icon>image</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Imágenes</span>
+                <span class="stat-value">{{
+                    estadisticas.documentosPorTipo.imagen }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="filtros-section">
+        <div class="busqueda-container">
+            <mat-icon>search</mat-icon>
+            <input
+                type="text"
+                placeholder="Buscar documento..."
+                [(ngModel)]="searchText"
+                class="search-input" />
+        </div>
+
+        <div class="filtro-categoria">
+            <label>Categoría:</label>
+            <select [(ngModel)]="filtroCategoria" class="categoria-select">
+                <option value>Todas</option>
+                <option value="General">General</option>
+                <option *ngFor="let cat of categorias" [value]="cat">{{ cat
+                    }}</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div class="error-message" *ngIf="errorMensaje">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMensaje }}</span>
+    </div>
+
+    <!-- Indicador de carga -->
+    <div class="loading-indicator" *ngIf="cargando">
+        <div class="spinner"></div>
+        <p>Procesando documentos...</p>
+    </div>
+
+    <!-- Tabla de documentos -->
+    <div class="documentos-section">
+        <table class="documentos-table" *ngIf="documentosFiltrados.length > 0">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Tamaño</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th class="acciones-column">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let doc of documentosFiltrados"
+                    class="documento-row">
+                    <td class="nombre-cell">
+                        <div class="nombre-content">
+                            <mat-icon class="tipo-icon"
+                                [ngClass]="'icon-' + doc.tipo">
+                                {{ obtenerIcono(doc.tipo) }}
+                            </mat-icon>
+                            <div class="nombre-info">
+                                <p class="doc-nombre">{{ doc.nombre }}</p>
+                                <p class="doc-descripcion"
+                                    *ngIf="doc.descripcion">{{ doc.descripcion
+                                    }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ doc.tipo | uppercase }}</td>
+                    <td>{{ doc.tamanio }}</td>
+                    <td>{{ doc.fechaCarga }}</td>
+                    <td>
+                        <span class="estado-badge"
+                            [ngClass]="'estado-' + doc.estado">
+                            {{ doc.estado }}
+                        </span>
+                    </td>
+                    <td class="acciones-cell">
+                        <button class="btn-icon"
+                            (click)="descargarDocumento(doc)" title="Descargar">
+                            <mat-icon>download</mat-icon>
+                        </button>
+                        <button class="btn-icon btn-danger"
+                            (click)="eliminarDocumento(doc.id)"
+                            title="Eliminar">
+                            <mat-icon>delete_outline</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Estado vacío -->
+        <div class="empty-state"
+            *ngIf="documentosFiltrados.length === 0 && documentos.length === 0">
+            <mat-icon>cloud_upload</mat-icon>
+            <h3>No hay documentos</h3>
+            <p>Comienza cargando documentos para análisis</p>
+        </div>
+
+        <!-- Sin resultados en búsqueda -->
+        <div class="empty-state"
+            *ngIf="documentosFiltrados.length === 0 && documentos.length > 0">
+            <mat-icon>search_off</mat-icon>
+            <h3>Sin resultados</h3>
+            <p>No se encontraron documentos que coincidan con tu búsqueda</p>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,142 @@
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <!-- ENCABEZADO -->
+        <div class="brand">
+            <h1>Requisoft</h1>
+            <p>Gestión profesional de requerimientos</p>
+        </div>
+
+        <!-- LOGIN -->
+        <div *ngIf="modo === 'login'" class="form-box">
+            <h2>Iniciar Sesión</h2>
+
+            <div class="alert error" *ngIf="error">{{ error }}</div>
+            <div class="alert success" *ngIf="exito">{{ exito }}</div>
+
+            <div class="input-group">
+                <label>Correo electrónico</label>
+                <div class="input-field">
+                    <mat-icon>email</mat-icon>
+                    <input type="email"
+                        [(ngModel)]="login.correo"
+                        placeholder="correo@empresa.com">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Contraseña</label>
+                <div class="input-field">
+                    <mat-icon>lock</mat-icon>
+                    <input [type]="mostrarPassword ? 'text' : 'password'"
+                        [(ngModel)]="login.contrasena"
+                        placeholder="Tu contraseña">
+                    <mat-icon class="toggle"
+                        (click)="togglePassword()">
+                        {{ mostrarPassword ? 'visibility' : 'visibility_off' }}
+                    </mat-icon>
+                </div>
+            </div>
+
+            <div class="forgot">
+                <a (click)="cambiarModo('reset')">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </div>
+
+            <button class="primary-btn"
+                (click)="iniciarSesion()"
+                [disabled]="!loginValido || cargando">
+                {{ cargando ? 'Ingresando...' : 'Ingresar' }}
+            </button>
+
+            <div class="switch">
+                ¿No tienes cuenta?
+                <span (click)="cambiarModo('registro')">Crear cuenta</span>
+            </div>
+        </div>
+
+        <!-- REGISTRO -->
+        <div *ngIf="modo === 'registro'" class="form-box">
+            <h2>Crear Cuenta</h2>
+
+            <div class="input-group">
+                <label>Nombre completo</label>
+                <div class="input-field">
+                    <mat-icon>person</mat-icon>
+                    <input type="text"
+                        [(ngModel)]="registro.nombre"
+                        placeholder="Tu nombre">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Correo electrónico</label>
+                <div class="input-field">
+                    <mat-icon>email</mat-icon>
+                    <input type="email"
+                        [(ngModel)]="registro.correo"
+                        placeholder="correo@empresa.com">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Contraseña</label>
+                <div class="input-field">
+                    <mat-icon>lock</mat-icon>
+                    <input type="password"
+                        [(ngModel)]="registro.contrasena"
+                        placeholder="Mínimo 6 caracteres">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Confirmar contraseña</label>
+                <div class="input-field">
+                    <mat-icon>lock</mat-icon>
+                    <input type="password"
+                        [(ngModel)]="registro.confirmarContrasena"
+                        placeholder="Repite la contraseña">
+                </div>
+            </div>
+
+            <button class="primary-btn"
+                (click)="registrarse()"
+                [disabled]="!registroValido || cargando">
+                Crear cuenta
+            </button>
+
+            <div class="switch">
+                ¿Ya tienes cuenta?
+                <span (click)="cambiarModo('login')">Iniciar sesión</span>
+            </div>
+        </div>
+
+        <!-- RESET -->
+        <div *ngIf="modo === 'reset'" class="form-box">
+            <h2>Recuperar contraseña</h2>
+
+            <div class="input-group">
+                <label>Correo electrónico</label>
+                <div class="input-field">
+                    <mat-icon>email</mat-icon>
+                    <input type="email"
+                        [(ngModel)]="resetCorreo"
+                        placeholder="correo@empresa.com">
+                </div>
+            </div>
+
+            <button class="primary-btn"
+                (click)="enviarReset()">
+                Enviar enlace
+            </button>
+
+            <div class="switch">
+                <span (click)="cambiarModo('login')">Volver al login</span>
+            </div>
+        </div>
+
+    </div>
+
+</div>
