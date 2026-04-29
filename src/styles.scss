@@ -1,49 +1,55 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
-@use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
-html {
-  height: 100%;
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
+:root {
+  --app-bg: #fffbf6;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-muted: #526174;
+  --color-label: #344154;
+  --color-placeholder: #778196;
+  --color-icon: #9aa6b8;
+  --color-border: #f0ece7;
+  --color-input: #f0f0f2;
+  --color-primary: #ff4e00;
+  --color-primary-dark: #e94700;
+  --shadow-card: 0 18px 36px rgba(17, 24, 39, 0.12);
+  --font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+  color-scheme: light;
+  font-family: var(--font-family);
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
-  height: 100%;
-}
-
-/* Global Styles */
-html, body {
-  height: 100%;
+  background: var(--app-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  text-rendering: optimizeLegibility;
 }
 
 * {
   box-sizing: border-box;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+p {
+  overflow-wrap: anywhere;
 }
